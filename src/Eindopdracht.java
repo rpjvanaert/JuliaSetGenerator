@@ -1,9 +1,3 @@
-
-/*
-https://www.way2techin.com/2017/04/c-program-to-draw-mandelbrot-set-and.html
-
-
- */
 import java.awt.*;
 import java.awt.geom.*;
 import javafx.animation.AnimationTimer;
@@ -27,6 +21,7 @@ public class Eindopdracht extends Application {
         canvas = new Canvas(1920, 980);
         mainPane.setCenter(canvas);
         FXGraphics2D g2d = new FXGraphics2D(canvas.getGraphicsContext2D());
+        Camera camera = new Camera(canvas, g2d);
 
         new AnimationTimer() {
             long last = -1;

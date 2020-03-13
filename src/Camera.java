@@ -22,9 +22,8 @@ public class Camera {
 	private Resizable resizable;
 	private FXGraphics2D g2d;
 
-	public Camera(Canvas canvas, Resizable resizable, FXGraphics2D g2d) {
+	public Camera(Canvas canvas, FXGraphics2D g2d) {
 		this.canvas = canvas;
-		this.resizable = resizable;
 		this.g2d = g2d;
 
 		canvas.setOnMousePressed(e -> {lastMousePos = new Point2D.Double(e.getX(), e.getY());});
