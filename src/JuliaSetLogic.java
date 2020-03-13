@@ -8,6 +8,7 @@ public class JuliaSetLogic {
     private float focusPointR, focusPointI;
     private int resWidth, resHeight;
     private float nullReal, nullImag;
+    private boolean mandlable;
 
 
     public JuliaSetLogic(int resWidth, int resHeight, float nullReal, float nullImag, float focusPointR, float focusPointI, float stepSize){
@@ -17,35 +18,68 @@ public class JuliaSetLogic {
         this.iterations = new int[resWidth][resHeight];
         this.maxIterations = 500;
         this.nullReal = nullReal; this.nullImag = nullImag;
+        this.mandlable = false;
     }
 
     public JuliaSetLogic(int resWidth, int resHeight, float focusPointR, float focusPointI, float stepSize){
         this(resWidth, resHeight, 0.0f, 0.0f, focusPointR, focusPointI, stepSize);
+        this.mandlable = true;
+    }
+
+    public void initMandlebrotSet(){
+        if (this.mandlable){
+            int indexR = 0;
+            int indexI = 0;
+            float width = (float)resWidth * stepSize;
+
+            float rMin = focusPointR - 0.5f * width;
+            float rMax = focusPointR + 0.5f * width;
+
+            float iMin = focusPointI - 0.5f * (float)resHeight * stepSize;
+            float iMax = focusPointI + 0.5f * (float)resHeight * stepSize;
+
+            for (float r = rMin; r < rMax; r += stepSize){
+                for (float i = iMin; i < iMax; i += stepSize){
+                    if (indexI >= resHeight){
+                        break;
+                    }
+                    this.iterations[indexR][indexI] = juliaIterations(r, i, nullReal, nullImag);
+                    indexI++;
+                }
+                indexI = 0;
+                indexR++;
+                if (indexR >= resWidth){
+                    break;
+                }
+            }
+        }
     }
 
     public void initJuliaSet(){
-        int indexR = 0;
-        int indexI = 0;
-        float width = (float)resWidth * stepSize;
+        if (!this.mandlable){
+            int indexR = 0;
+            int indexI = 0;
+            float width = (float)resWidth * stepSize;
 
-        float rMin = focusPointR - 0.5f * width;
-        float rMax = focusPointR + 0.5f * width;
+            float rMin = focusPointR - 0.5f * width;
+            float rMax = focusPointR + 0.5f * width;
 
-        float iMin = focusPointI - 0.5f * (float)resHeight * stepSize;
-        float iMax = focusPointI + 0.5f * (float)resHeight * stepSize;
+            float iMin = focusPointI - 0.5f * (float)resHeight * stepSize;
+            float iMax = focusPointI + 0.5f * (float)resHeight * stepSize;
 
-        for (float r = rMin; r < rMax; r += stepSize){
-            for (float i = iMin; i < iMax; i += stepSize){
-                if (indexI >= resHeight){
+            for (float r = rMin; r < rMax; r += stepSize){
+                for (float i = iMin; i < iMax; i += stepSize){
+                    if (indexI >= resHeight){
+                        break;
+                    }
+                    this.iterations[indexR][indexI] = juliaIterations(nullReal, nullImag, r, i);
+                    indexI++;
+                }
+                indexI = 0;
+                indexR++;
+                if (indexR >= resWidth){
                     break;
                 }
-                this.iterations[indexR][indexI] = juliaIterations(nullReal, nullImag, r, i);
-                indexI++;
-            }
-            indexI = 0;
-            indexR++;
-            if (indexR >= resWidth){
-                break;
             }
         }
     }
@@ -63,7 +97,7 @@ public class JuliaSetLogic {
         return -1;
     }
 
-    public float getStepSize(){ return this.stepSize; }
+    public boolean getMandlable(){ return this.mandlable; }
 
     public void setMaxIterations(int amount){
         if (amount > 0){
@@ -72,7 +106,11 @@ public class JuliaSetLogic {
     }
 
     public String getFileNamePreset(){
-        return "JuliaSet@(" + this.nullReal + "+ "+ this.nullImag +")_focus(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "_res(" + this.resWidth + "x" + this.resHeight + ")px";
+        if (!mandlable){
+            return "JuliaSet@(" + this.nullReal + "+ "+ this.nullImag +")_focus(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "x_res(" + this.resWidth + "x" + this.resHeight + ")px";
+        } else {
+            return "Mandlebrot@(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "x_ res(" + this.resWidth + "x" + this.resHeight + ")px";
+        }
     }
 
     public int[][] getIterations(){
