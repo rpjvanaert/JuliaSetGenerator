@@ -7,16 +7,16 @@ public class JuliaSetLogic {
     private int maxIterations;
     private float focusPointR, focusPointI;
     private int resWidth, resHeight;
-    private float realZ, imagZ;
+    private float nullReal, nullImag;
 
 
-    public JuliaSetLogic(int resWidth, int resHeight, float realZ, float imagZ, float focusPointR, float focusPointI, float stepSize){
+    public JuliaSetLogic(int resWidth, int resHeight, float nullReal, float nullImag, float focusPointR, float focusPointI, float stepSize){
         this.stepSize = stepSize;
         this.resWidth = resWidth; this.resHeight = resHeight;
         this.focusPointR = focusPointR; this.focusPointI = focusPointI;
         this.iterations = new int[resWidth][resHeight];
         this.maxIterations = 500;
-        this.realZ = realZ; this.imagZ = imagZ;
+        this.nullReal = nullReal; this.nullImag = nullImag;
     }
 
     public JuliaSetLogic(int resWidth, int resHeight, float focusPointR, float focusPointI, float stepSize){
@@ -39,7 +39,7 @@ public class JuliaSetLogic {
                 if (indexI >= resHeight){
                     break;
                 }
-                this.iterations[indexR][indexI] = juliaIterations(realZ, imagZ, r, i);
+                this.iterations[indexR][indexI] = juliaIterations(nullReal, nullImag, r, i);
                 indexI++;
             }
             indexI = 0;
@@ -51,8 +51,8 @@ public class JuliaSetLogic {
     }
 
     private int juliaIterations(float nullReal, float nullImag, float real, float imag){
-        Complex c = new Complex(real, imag);
-        Complex z = new Complex(nullReal, nullImag);
+        Complex c = new Complex(nullReal, nullImag);
+        Complex z = new Complex(real, imag);
         for (int i = 0; i < this.maxIterations; ++i){
             z.square();
             z.addToYourself(c);
@@ -72,7 +72,7 @@ public class JuliaSetLogic {
     }
 
     public String getFileNamePreset(){
-        return "JuliaSet@(" + this.realZ + "+ "+ this.imagZ +")_focus(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "_res(" + this.resWidth + "x" + this.resHeight + ")px";
+        return "JuliaSet@(" + this.nullReal + "+ "+ this.nullImag +")_focus(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "_res(" + this.resWidth + "x" + this.resHeight + ")px";
     }
 
     public int[][] getIterations(){
