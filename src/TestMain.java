@@ -7,9 +7,9 @@ public class TestMain {
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-        JuliaSetLogic juliaSetLogic = new JuliaSetLogic(1920,1080, 0.255f, 0.0003f,  0.000001f);
+        JuliaSetLogic juliaSetLogic = new JuliaSetLogic(1920,1080, 0.254f, 0.0004f,  0.000001f);
         juliaSetLogic.setMaxIterations(1000);
-        juliaSetLogic.initMandleBrot();
+        juliaSetLogic.initJuliaSet();
         BufferedImage juliaIMG = juliaSetLogic.getImage();
         long mid = System.currentTimeMillis();
         try {
