@@ -1,3 +1,5 @@
+package MandelbrotAndJuliaSet;
+
 public class Complex {
     private float real;
     private float imaginary;
