@@ -1,12 +1,14 @@
+package General;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import org.jfree.fx.FXGraphics2D;
 import org.jfree.fx.Resizable;
-import org.jfree.fx.ResizableCanvas;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
 
@@ -21,6 +23,7 @@ public class Camera {
 	private Canvas canvas;
 	private Resizable resizable;
 	private FXGraphics2D g2d;
+	private AffineTransform inverse = null;
 
 	public Camera(Canvas canvas, FXGraphics2D g2d) {
 		this.canvas = canvas;
@@ -33,12 +36,19 @@ public class Camera {
 
 
 
-	public AffineTransform getTransform(int windowWidth, int windowHeight)  {
+	public AffineTransform getTransform(int windowWidth, int windowHeight, boolean center)  {
 		AffineTransform tx = new AffineTransform();
-		tx.translate(windowWidth/2, windowHeight/2);
+		if (center){
+			tx.translate(windowWidth/2, windowHeight/2);
+		}
 		tx.scale(zoom, zoom);
 		tx.translate(centerPoint.getX(), centerPoint.getY());
 		tx.rotate(rotation);
+		try {
+			this.inverse = tx.createInverse();
+		} catch (NoninvertibleTransformException e) {
+			e.printStackTrace();
+		}
 		return tx;
 	}
 
@@ -49,12 +59,14 @@ public class Camera {
 					centerPoint.getY() - (lastMousePos.getY() - e.getY()) / zoom
 			);
 			lastMousePos = new Point2D.Double(e.getX(), e.getY());
-			resizable.draw(g2d);
 		}
 	}
 
 	public void mouseScroll(ScrollEvent e) {
 		zoom *= (1 + e.getDeltaY()/250.0f);
-		resizable.draw(g2d);
 	}
+
+	public void setInverseNull(){ this.inverse = null; }
+
+	public AffineTransform getInverse(){ return this.inverse;}
 }

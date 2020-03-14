@@ -1,3 +1,4 @@
+import MandelbrotAndJuliaSet.JuliaSetTab;
 import MandelbrotAndJuliaSet.MandelbrotSetTab;
 import javafx.application.Application;
 
@@ -14,10 +15,15 @@ public class Eindopdracht extends Application {
     public void start(Stage stage) throws Exception {
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+
         Tab mandelbrotTab = new Tab("MandelbrotSet");
+        Tab juliaTab = new Tab("JuliaSet");
+
         MandelbrotSetTab mandelbrotSetTab = new MandelbrotSetTab();
+        JuliaSetTab juliaSetTab = new JuliaSetTab();
         mandelbrotTab.setContent(mandelbrotSetTab.getNode());
-        tabPane.getTabs().addAll(mandelbrotTab);
+        juliaTab.setContent(juliaSetTab.getNode());
+        tabPane.getTabs().addAll(mandelbrotTab, juliaTab);
 
         stage.setScene(new Scene(tabPane));
         stage.setTitle("Ralf van Aert 2D-ComputerGraphics Eindopdracht");
