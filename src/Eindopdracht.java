@@ -1,18 +1,11 @@
-import java.awt.*;
-import java.awt.geom.*;
-
-import MandelbrotAndJuliaSet.MandelbrotSetScene;
-import javafx.animation.AnimationTimer;
+import MandelbrotAndJuliaSet.MandelbrotSetTab;
 import javafx.application.Application;
-import javafx.scene.canvas.Canvas;
+
 import static javafx.application.Application.launch;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import org.jfree.fx.FXGraphics2D;
 
 
 public class Eindopdracht extends Application {
@@ -22,8 +15,8 @@ public class Eindopdracht extends Application {
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         Tab mandelbrotTab = new Tab("MandelbrotSet");
-        MandelbrotSetScene mandelbrotSetScene = new MandelbrotSetScene();
-        mandelbrotTab.setContent(mandelbrotSetScene.getNode());
+        MandelbrotSetTab mandelbrotSetTab = new MandelbrotSetTab();
+        mandelbrotTab.setContent(mandelbrotSetTab.getNode());
         tabPane.getTabs().addAll(mandelbrotTab);
 
         stage.setScene(new Scene(tabPane));

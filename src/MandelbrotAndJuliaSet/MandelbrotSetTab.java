@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
 //@TODO readTextFields(); Read every textField and return false if not right format.
 // @TODO tfError(); Error pop up for wrong textField formatting.
 
-public class MandelbrotSetScene {
+public class MandelbrotSetTab {
     private HBox hBox;
     private VBox vBox;
     private Canvas canvas;
@@ -28,7 +28,7 @@ public class MandelbrotSetScene {
     private JuliaSetLogic mandelbrotSetLogic;
     private BufferedImage renderIMG;
 
-    public MandelbrotSetScene(){
+    public MandelbrotSetTab(){
         this.hBox = new HBox();
         this.vBox = new VBox();
         this.canvas = new Canvas(1920, 980);
