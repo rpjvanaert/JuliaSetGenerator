@@ -18,9 +18,7 @@ import javax.imageio.ImageIO;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
-//@TODO readTextFields(); Read every textField and return false if not right format.
-//@TODO tfError(); Error pop up for wrong textField formatting.
+import java.io.IOException;
 
 public class MandelbrotSetTab implements TabInterface{
     private HBox hBox;
@@ -29,18 +27,15 @@ public class MandelbrotSetTab implements TabInterface{
     private FXGraphics2D g2d;
     private Camera camera;
 
-    private Button buttonRender, buttonReset;
+    private Button buttonRender, buttonReset, buttonSave;
     private Label labelFocusR, labelFocusI, labelStepSize, labelIterations;
     private TextField tfFocusR, tfFocusI, tfStepSize, tfIterations;
-
-    private Button zoomIn, zoomOut;
-    private float stepSize;
 
     private Stage popUp;
     private Label labelError;
 
     private JuliaSetLogic mandelbrotSetLogic;
-    private BufferedImage renderIMG;
+    private BufferedImage renderIMG = null;
 
     public MandelbrotSetTab(){
         this.hBox = new HBox();
@@ -62,6 +57,19 @@ public class MandelbrotSetTab implements TabInterface{
             this.setNormalMandelbrot();
         });
 
+        this.buttonSave = new Button("Save Image");
+        this.buttonSave.setOnAction(event -> {
+            if(this.renderIMG != null){
+                try {
+                    ImageIO.write(this.renderIMG, "png", new File("saveImages/" + this.mandelbrotSetLogic.getFileNamePreset() + ".png"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                this.saveError();
+            }
+        });
+
         this.labelFocusR = new Label("Focus Point Real:");
         this.labelFocusI = new Label("Focus Point Imaginary:");
         this.labelStepSize = new Label("Step size per pixel(render-zoom):");
@@ -70,35 +78,22 @@ public class MandelbrotSetTab implements TabInterface{
         this.tfFocusR = new TextField(); this.tfFocusI = new TextField();
         this.tfStepSize = new TextField(); this.tfIterations = new TextField();
 
-        this.zoomIn = new Button("+");
-        this.zoomIn.setOnAction(event -> {
-            this.stepSize /= 1.50f;
-            this.tfStepSize.setText("" + this.stepSize);
-        });
-        this.zoomOut = new Button("-");
-        this.zoomOut.setOnAction(event -> {
-            this.stepSize *= 1.50f;
-            this.tfStepSize.setText("" + this.stepSize);
-        });
 
 
         this.hBox.getChildren().addAll(
                 this.buttonRender, this.buttonReset,
                 this.labelFocusR, this.tfFocusR,
                 this.labelFocusI, this.tfFocusI,
-                this.labelStepSize, this.zoomIn, this.zoomOut, this.tfStepSize,
-                this.labelIterations, this.tfIterations
+                this.labelStepSize, this.tfStepSize,
+                this.labelIterations, this.tfIterations,
+                this.buttonSave
         );
         this.setNormalMandelbrot();
         this.vBox.getChildren().addAll(this.hBox, this.canvas);
 
         this.popUp = new Stage();
         VBox errorVBOX = new VBox();
-        this.labelError = new Label(
-                "Make sure every TextField is formatted right.\n" +
-                "Every TextField should be a float.\n" +
-                        "Except Iterations, that should be an integer and bigger than 0.\n" +
-                        "Examples: float: 0.0f  or  integer: 10");
+        this.labelError = new Label();
         errorVBOX.getChildren().add(this.labelError);
         this.popUp.setScene(new Scene(errorVBOX));
         this.popUp.setTitle("Error Pop-up");
@@ -140,6 +135,15 @@ public class MandelbrotSetTab implements TabInterface{
     }
 
     private void tfError() {
+        this.labelError.setText("Make sure every TextField is formatted right.\n" +
+                "Every TextField should be a float.\n" +
+                "Except Iterations, this should be an integer and bigger than 0.\n" +
+                "Examples: float: 0.0f  or  integer: 100");
+        this.popUp.show();
+    }
+
+    private void saveError() {
+        this.labelError.setText("Render Image before saving Image!");
         this.popUp.show();
     }
 
@@ -167,8 +171,7 @@ public class MandelbrotSetTab implements TabInterface{
     }
 
     private void setNormalMandelbrot(){
-        this.stepSize = 0.002f;
-        this.tfFocusR.setText("0.0f"); this.tfFocusI.setText("0.0f"); this.tfStepSize.setText("" + this.stepSize); this.tfIterations.setText("1000");
+        this.tfFocusR.setText("0.0f"); this.tfFocusI.setText("0.0f"); this.tfStepSize.setText("0.002f"); this.tfIterations.setText("1000");
         this.setMandelbrot(0.0f, 0.0f, 0.002f, 1000);
     }
 

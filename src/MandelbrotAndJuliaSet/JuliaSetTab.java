@@ -1,6 +1,5 @@
 package MandelbrotAndJuliaSet;
 
-
 import General.Camera;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
@@ -15,8 +14,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
 
+import javax.imageio.ImageIO;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class JuliaSetTab implements TabInterface {
     private HBox hBox;
@@ -26,9 +28,9 @@ public class JuliaSetTab implements TabInterface {
     private Camera camera;
 
     private JuliaSetLogic juliaSetLogic;
-    private BufferedImage renderIMG;
+    private BufferedImage renderIMG = null;
 
-    private Button buttonRender, buttonReset;
+    private Button buttonRender, buttonReset, buttonSave;
     private Label labelNullR, labelNullI, labelFocusR, labelFocusI, labelStepSize, labelIterations;
     private TextField tfNullR, tfNullI, tfFocusR, tfFocusI, tfStepSize, tfIterations;
 
@@ -51,12 +53,24 @@ public class JuliaSetTab implements TabInterface {
         });
 
         this.buttonReset = new Button("Reset TextFields");
-        this.buttonRender.setOnAction(event -> {
+        this.buttonReset.setOnAction(event -> {
             this.setNormalJuliaSet();
         });
 
-        this.labelNullR = new Label("Null Point Real:");
-        this.labelNullI = new Label("Null Point Imaginary:");
+        this.buttonSave = new Button("Save Image");
+        this.buttonSave.setOnAction(event -> {
+            if (this.renderIMG != null){
+                try {
+                    ImageIO.write(this.renderIMG, "png", new File("SaveImages/" + this.juliaSetLogic.getFileNamePreset() + ".png"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                this.saveError();
+            }
+        });
+        this.labelNullR = new Label("C Point Real:");
+        this.labelNullI = new Label("C Point Imaginary:");
         this.labelFocusR = new Label("Focus Point Real:");
         this.labelFocusI = new Label("Focus Point Imaginary:");
         this.labelStepSize = new Label("Step size per pixel(render-zoom):");
@@ -73,20 +87,17 @@ public class JuliaSetTab implements TabInterface {
                 this.labelFocusR, this.tfFocusR,
                 this.labelFocusI, this.tfFocusI,
                 this.labelStepSize, this.tfStepSize,
-                this.labelIterations, this.tfIterations
+                this.labelIterations, this.tfIterations,
+                this.buttonSave
         );
         this.vBox.getChildren().addAll(this.hBox, this.canvas);
         this.setNormalJuliaSet();
 
         this.popUp = new Stage();
-        VBox errorVBOX = new VBox();
-        this.labelError = new Label(
-                "Make sure every TextField is formatted right.\n" +
-                        "Every TextField should be a float.\n" +
-                        "Except Iterations, that should be an integer and bigger than 0.\n" +
-                        "Examples: float: 0.0f  or  integer: 10");
-        errorVBOX.getChildren().add(this.labelError);
-        this.popUp.setScene(new Scene(errorVBOX));
+        VBox errorTFVBOX = new VBox();
+        this.labelError = new Label();
+        errorTFVBOX.getChildren().add(this.labelError);
+        this.popUp.setScene(new Scene(errorTFVBOX));
         this.popUp.setTitle("Error Pop-up");
         Image icon = new Image(getClass().getResourceAsStream("/GUI-Images/error.png"));
         this.popUp.getIcons().add(icon);
@@ -125,7 +136,18 @@ public class JuliaSetTab implements TabInterface {
         this.g2d.drawImage(this.renderIMG, null, null);
     }
 
-    private void tfError(){ this.popUp.show(); }
+    private void tfError(){
+        this.labelError.setText("Make sure every TextField is formatted right.\n" +
+                "Every TextField should be a float.\n" +
+                "Except Iterations, this should be an integer and bigger than 0.\n" +
+                "Examples: float: 0.0f  or  integer: 100");
+        this.popUp.show();
+    }
+
+    private void saveError(){
+        this.labelError.setText("Render Image before saving Image!");
+        this.popUp.show();
+    }
 
     private boolean readTextFields() {
         try{
@@ -143,7 +165,7 @@ public class JuliaSetTab implements TabInterface {
     }
 
     private void render() {
-        this.juliaSetLogic.initMandlebrotSet();
+        this.juliaSetLogic.initJuliaSet();
         this.renderIMG = this.juliaSetLogic.getImage();
         this.camera = new Camera(this.canvas, this.g2d);
     }
@@ -154,7 +176,7 @@ public class JuliaSetTab implements TabInterface {
     }
 
     private void setNormalJuliaSet(){
-        this.tfNullR.setText("-0.8f"); this.tfNullI.setText("0.156f"); this.tfFocusR.setText("0.0f"); this.tfFocusI.setText("0.0f"); this.tfStepSize.setText("0.001f"); this.tfIterations.setText("1000");
+        this.tfNullR.setText("-0.8f"); this.tfNullI.setText("0.156f"); this.tfFocusR.setText("0.0f"); this.tfFocusI.setText("0.0f"); this.tfStepSize.setText("0.002f"); this.tfIterations.setText("1000");
     }
 
     public Node getNode(){
