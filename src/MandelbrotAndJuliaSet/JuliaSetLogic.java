@@ -99,8 +99,6 @@ public class JuliaSetLogic {
         return -1;
     }
 
-    public boolean getMandlable(){ return this.mandlable; }
-
     public void setMaxIterations(int amount){
         if (amount > 0){
             this.maxIterations = amount;
@@ -113,10 +111,6 @@ public class JuliaSetLogic {
         } else {
             return "Mandlebrot@(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "x_ res(" + this.resWidth + "x" + this.resHeight + ")px";
         }
-    }
-
-    public int[][] getIterations(){
-        return this.iterations;
     }
 
     @Override

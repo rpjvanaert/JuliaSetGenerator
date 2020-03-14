@@ -6,12 +6,15 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 //@TODO readTextFields(); Read every textField and return false if not right format.
 //@TODO tfError(); Error pop up for wrong textField formatting.
@@ -73,12 +76,22 @@ public class MandelbrotSetTab {
 
         this.popUp = new Stage();
         VBox errorVBOX = new VBox();
-        this.labelError = new Label("Make sure every TextField is formatted right.\nEvery TextField should be a float.\nExcept Iterations, that should be float.\n");
+        this.labelError = new Label(
+                "Make sure every TextField is formatted right.\n" +
+                "Every TextField should be a float.\n" +
+                        "Except Iterations, that should be an integer and bigger than 0.\n" +
+                        "Examples: float: 0.0f  or  integer: 10");
         errorVBOX.getChildren().add(this.labelError);
         this.popUp.setScene(new Scene(errorVBOX));
+        this.popUp.setTitle("Error Pop-up");
+        Image icon = new Image(getClass().getResourceAsStream("/GUI-Images/error.png"));
+        this.popUp.getIcons().add(icon);
+        this.popUp.setWidth(400);
+        this.popUp.setHeight(120);
     }
 
     private void tfError() {
+        this.popUp.show();
     }
 
     private boolean readTextFields() {
