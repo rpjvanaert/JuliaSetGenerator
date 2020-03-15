@@ -9,18 +9,20 @@ public class JuliaSetLogic {
     private int maxIterations;
     private float focusPointR, focusPointI;
     private int resWidth, resHeight;
-    private float nullReal, nullImag;
+    private float cReal, cImag;
     private boolean mandlable;
+    private float hueCycleSpeed;
 
 
-    public JuliaSetLogic(int resWidth, int resHeight, float nullReal, float nullImag, float focusPointR, float focusPointI, float stepSize){
+    public JuliaSetLogic(int resWidth, int resHeight, float cReal, float cImag, float focusPointR, float focusPointI, float stepSize){
         this.stepSize = stepSize;
         this.resWidth = resWidth; this.resHeight = resHeight;
         this.focusPointR = focusPointR; this.focusPointI = focusPointI;
         this.iterations = new int[resWidth][resHeight];
         this.maxIterations = 500;
-        this.nullReal = nullReal; this.nullImag = nullImag;
+        this.cReal = cReal; this.cImag = cImag;
         this.mandlable = false;
+        this.hueCycleSpeed = 0.002f;
     }
 
     public JuliaSetLogic(int resWidth, int resHeight, float focusPointR, float focusPointI, float stepSize){
@@ -45,7 +47,7 @@ public class JuliaSetLogic {
                     if (indexI >= resHeight){
                         break;
                     }
-                    this.iterations[indexR][indexI] = juliaIterations(r, i, nullReal, nullImag);
+                    this.iterations[indexR][indexI] = juliaIterations(r, i, cReal, cImag);
                     indexI++;
                 }
                 indexI = 0;
@@ -74,7 +76,7 @@ public class JuliaSetLogic {
                     if (indexI >= resHeight){
                         break;
                     }
-                    this.iterations[indexR][indexI] = juliaIterations(nullReal, nullImag, r, i);
+                    this.iterations[indexR][indexI] = juliaIterations(cReal, cImag, r, i);
                     indexI++;
                 }
                 indexI = 0;
@@ -86,8 +88,8 @@ public class JuliaSetLogic {
         }
     }
 
-    private int juliaIterations(float nullReal, float nullImag, float real, float imag){
-        Complex c = new Complex(nullReal, nullImag);
+    private int juliaIterations(float cReal, float cImag, float real, float imag){
+        Complex c = new Complex(cReal, cImag);
         Complex z = new Complex(real, imag);
         for (int i = 0; i < this.maxIterations; ++i){
             z.square();
@@ -107,9 +109,9 @@ public class JuliaSetLogic {
 
     public String getFileNamePreset(){
         if (!mandlable){
-            return "JuliaSet@(" + this.nullReal + "+ "+ this.nullImag +")_focus(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "x_res(" + this.resWidth + "x" + this.resHeight + ")px";
+            return "JuliaSet@(" + this.cReal + "+ "+ this.cImag +")_focus(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "x_HCS(" + this.hueCycleSpeed + ")_res(" + this.resWidth + "x" + this.resHeight + ")px";
         } else {
-            return "Mandlebrot@(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "x_ res(" + this.resWidth + "x" + this.resHeight + ")px";
+            return "Mandlebrot@(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "x_HCS(" + this.hueCycleSpeed +")_res(" + this.resWidth + "x" + this.resHeight + ")px";
         }
     }
 
@@ -143,9 +145,13 @@ public class JuliaSetLogic {
                     bright = 1.0f;
                     sat = 1.0f;
                 }
-                img.setRGB(x, y, Color.getHSBColor(iterate * 0.01f, sat, bright).getRGB());
+                img.setRGB(x, y, Color.getHSBColor(iterate * this.hueCycleSpeed, sat, bright).getRGB());
             }
         }
         return img;
     }
+
+    public float getHueCycleSpeed(){ return this.hueCycleSpeed; }
+
+    public void setHueCycleSpeed(float hueCycleSpeed){ this.hueCycleSpeed = hueCycleSpeed; }
 }

@@ -61,7 +61,7 @@ public class MandelbrotSetTab implements TabInterface{
         this.buttonSave.setOnAction(event -> {
             if(this.renderIMG != null){
                 try {
-                    ImageIO.write(this.renderIMG, "png", new File("saveImages/" + this.mandelbrotSetLogic.getFileNamePreset() + ".png"));
+                    ImageIO.write(this.renderIMG, "png", new File("saveFolder/" + this.mandelbrotSetLogic.getFileNamePreset() + ".png"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
