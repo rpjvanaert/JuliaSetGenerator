@@ -1,5 +1,6 @@
 package MandelbrotAndJuliaSet;
 
+import General.TabInterface;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -20,7 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class MandelbrotSetTab implements TabInterface{
+public class MandelbrotSetTab implements TabInterface {
     private HBox hBox;
     private VBox vBox;
     private Canvas canvas;
@@ -28,8 +29,8 @@ public class MandelbrotSetTab implements TabInterface{
     private Camera camera;
 
     private Button buttonRender, buttonReset, buttonSave;
-    private Label labelFocusR, labelFocusI, labelStepSize, labelIterations;
-    private TextField tfFocusR, tfFocusI, tfStepSize, tfIterations;
+    private Label labelFocusR, labelFocusI, labelStepSize, labelIterations, labelHueCycleSpeed;
+    private TextField tfFocusR, tfFocusI, tfStepSize, tfIterations, tfHueCycleSpeed;
 
     private Stage popUp;
     private Label labelError;
@@ -74,9 +75,11 @@ public class MandelbrotSetTab implements TabInterface{
         this.labelFocusI = new Label("Focus Point Imaginary:");
         this.labelStepSize = new Label("Step size per pixel(render-zoom):");
         this.labelIterations = new Label("Max amount of iterations");
+        this.labelHueCycleSpeed = new Label("Hue Cycle Speed");
 
         this.tfFocusR = new TextField(); this.tfFocusI = new TextField();
         this.tfStepSize = new TextField(); this.tfIterations = new TextField();
+        this.tfHueCycleSpeed = new TextField();
 
 
 
@@ -86,6 +89,7 @@ public class MandelbrotSetTab implements TabInterface{
                 this.labelFocusI, this.tfFocusI,
                 this.labelStepSize, this.tfStepSize,
                 this.labelIterations, this.tfIterations,
+                this.labelHueCycleSpeed, this.tfHueCycleSpeed,
                 this.buttonSave
         );
         this.setNormalMandelbrot();
@@ -153,7 +157,8 @@ public class MandelbrotSetTab implements TabInterface{
             float focusI = Float.parseFloat(this.tfFocusI.getText());
             float stepSize = Float.parseFloat(this.tfStepSize.getText());
             int iterations = Integer.parseInt(this.tfIterations.getText());
-            this.setMandelbrot(focusR, focusI, stepSize, iterations);
+            float hueCycleSpeed = Float.parseFloat(this.tfHueCycleSpeed.getText());
+            this.setMandelbrot(focusR, focusI, stepSize, iterations, hueCycleSpeed);
         } catch (Exception e){
             return false;
         }
@@ -165,14 +170,15 @@ public class MandelbrotSetTab implements TabInterface{
         this.renderIMG = this.mandelbrotSetLogic.getImage();
         this.camera = new Camera(this.canvas, this.g2d);
     }
-    private void setMandelbrot(float focusR, float focusI, float stepSize, int iterations){
+    private void setMandelbrot(float focusR, float focusI, float stepSize, int iterations, float hueCycleSpeed){
         this.mandelbrotSetLogic = new JuliaSetLogic(1920, 1080, focusR, focusI, stepSize);
         this.mandelbrotSetLogic.setMaxIterations(iterations);
+        this.mandelbrotSetLogic.setHueCycleSpeed(hueCycleSpeed);
     }
 
     private void setNormalMandelbrot(){
-        this.tfFocusR.setText("0.0f"); this.tfFocusI.setText("0.0f"); this.tfStepSize.setText("0.002f"); this.tfIterations.setText("1000");
-        this.setMandelbrot(0.0f, 0.0f, 0.002f, 1000);
+        this.tfFocusR.setText("0.0f"); this.tfFocusI.setText("0.0f"); this.tfStepSize.setText("0.002f"); this.tfIterations.setText("1000"); this.tfHueCycleSpeed.setText("0.002f");
+        this.setMandelbrot(0.0f, 0.0f, 0.002f, 1000, 0.002f);
     }
 
     public Node getNode(){ return this.vBox; }

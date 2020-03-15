@@ -1,5 +1,7 @@
+import General.TabInterface;
 import MandelbrotAndJuliaSet.JuliaSetTab;
 import MandelbrotAndJuliaSet.MandelbrotSetTab;
+import Others.SierpinskiTriangleTab;
 import javafx.application.Application;
 
 import static javafx.application.Application.launch;
@@ -18,12 +20,18 @@ public class Eindopdracht extends Application {
 
         Tab mandelbrotTab = new Tab("MandelbrotSet");
         Tab juliaTab = new Tab("JuliaSet");
+        Tab sierpinskiTab = new Tab("Sierpinski Triangle");
 
-        MandelbrotSetTab mandelbrotSetTab = new MandelbrotSetTab();
-        JuliaSetTab juliaSetTab = new JuliaSetTab();
+        TabInterface mandelbrotSetTab = new MandelbrotSetTab();
         mandelbrotTab.setContent(mandelbrotSetTab.getNode());
+
+        TabInterface juliaSetTab = new JuliaSetTab();
         juliaTab.setContent(juliaSetTab.getNode());
-        tabPane.getTabs().addAll(mandelbrotTab, juliaTab);
+
+        TabInterface sierpinskiTriangleTab = new SierpinskiTriangleTab();
+        sierpinskiTab.setContent(sierpinskiTriangleTab.getNode());
+
+        tabPane.getTabs().addAll(mandelbrotTab, juliaTab, sierpinskiTab);
 
         stage.setScene(new Scene(tabPane));
         stage.setTitle("Ralf van Aert 2D-ComputerGraphics Eindopdracht");

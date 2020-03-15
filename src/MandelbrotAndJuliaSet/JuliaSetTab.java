@@ -1,6 +1,7 @@
 package MandelbrotAndJuliaSet;
 
 import General.Camera;
+import General.TabInterface;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
 import javafx.scene.Scene;

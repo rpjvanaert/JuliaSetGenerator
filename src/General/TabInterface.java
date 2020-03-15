@@ -1,4 +1,4 @@
-package MandelbrotAndJuliaSet;
+package General;
 
 import javafx.scene.Node;
 

@@ -14,6 +14,7 @@ import java.awt.geom.Point2D;
 
 /**
  * Created by johan on 15-2-2017.
+ * Edited and adapted by Ralf van Aert on 14-3-2020.
  */
 public class Camera {
 	private Point2D centerPoint = new Point2D.Double(0,0);
@@ -33,8 +34,6 @@ public class Camera {
 		canvas.setOnMouseDragged(e -> mouseDragged(e));
 		canvas.setOnScroll(e-> mouseScroll(e));
 	}
-
-
 
 	public AffineTransform getTransform(int windowWidth, int windowHeight, boolean center)  {
 		AffineTransform tx = new AffineTransform();
@@ -65,8 +64,6 @@ public class Camera {
 	public void mouseScroll(ScrollEvent e) {
 		zoom *= (1 + e.getDeltaY()/250.0f);
 	}
-
-	public void setInverseNull(){ this.inverse = null; }
 
 	public AffineTransform getInverse(){ return this.inverse;}
 }
