@@ -24,7 +24,7 @@ public class Camera {
 	private Canvas canvas;
 	private Resizable resizable;
 	private FXGraphics2D g2d;
-	private AffineTransform inverse = null;
+	private AffineTransform inverse = new AffineTransform();
 
 	public Camera(Canvas canvas, FXGraphics2D g2d) {
 		this.canvas = canvas;

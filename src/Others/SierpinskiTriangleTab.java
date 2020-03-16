@@ -110,12 +110,18 @@ public class SierpinskiTriangleTab implements TabInterface {
             this.g2d.clearRect(0,0,1920,1080);
         } else {
             AffineTransform inverse = this.camera.getInverse();
-            this.g2d.clearRect(-(int)(inverse.getTranslateX() + 1920 * inverse.getScaleX()), -(int)(inverse.getTranslateY() + 1080 * inverse.getScaleY()), (int)(inverse.getTranslateX() + 1920 * inverse.getScaleX()), (int)(inverse.getTranslateY() + 1080 * inverse.getScaleY()));
+            this.g2d.clearRect(
+                    (int)inverse.getTranslateX(),
+                    (int)inverse.getTranslateY(),
+                    (int)(inverse.getScaleX() * (1920 - 2 * inverse.getTranslateX())),
+                    (int)(inverse.getScaleY() * (1080 - 2 * inverse.getTranslateY()))
+            );
         }
 
         this.g2d.setTransform(this.camera.getTransform(1920, 1080, true));
 
         this.g2d.setPaint(Color.WHITE);
+        this.g2d.setStroke(new BasicStroke(5.0f / ((float)Math.pow(1.5f, this.order))));
         for (Shape each : this.triangles){
             this.g2d.draw(each);
         }
