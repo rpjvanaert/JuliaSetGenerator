@@ -15,10 +15,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
+import sun.awt.OSInfo;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 //@TODO feature save button?
@@ -42,6 +49,9 @@ public class SierpinskiTriangleTab implements TabInterface {
     private Label labelError;
 
     private int order;
+
+    private BufferedImage renderIMG;
+    private Graphics2D g;
 
     public SierpinskiTriangleTab(){
         this.hBox = new HBox();
@@ -69,11 +79,14 @@ public class SierpinskiTriangleTab implements TabInterface {
             this.setTextFields();
         });
 
+        this.buttonSave = new Button("Save");
+        this.buttonSave.setOnAction(event -> this.saveCanvas());
+
         this.labelOrder = new Label("Order: ");
 
         this.tfOrder = new TextField("1");
 
-        this.hBox.getChildren().addAll(this.labelOrder, this.buttonPlus, this.buttonMin, this.tfOrder);
+        this.hBox.getChildren().addAll(this.labelOrder, this.buttonPlus, this.buttonMin, this.tfOrder, this.buttonSave);
         this.vBox.getChildren().addAll(this.hBox, this.canvas);
 
         this.popUp = new Stage();
@@ -148,6 +161,37 @@ public class SierpinskiTriangleTab implements TabInterface {
         }
     }
 
+    private void displayTriangles(AffineTransform inverse, int order, Point2D p1, Point2D p2, Point2D p3){
+        if (order == 0){
+            g.draw(new Line2D.Double(
+                    (p1.getX() - inverse.getTranslateX()),
+                    (p1.getY() - inverse.getTranslateY()),
+                    (p2.getX() - inverse.getTranslateX()),
+                    (p2.getY() - inverse.getTranslateY()))
+            );
+            g.draw(new Line2D.Double(
+                    (p3.getX() - inverse.getTranslateX()),
+                    (p3.getY() - inverse.getTranslateY()),
+                    (p2.getX() - inverse.getTranslateX()),
+                    (p2.getY() - inverse.getTranslateY())
+            ));
+            g.draw(new Line2D.Double(
+                    (p1.getX() - inverse.getTranslateX()),
+                    (p1.getY() - inverse.getTranslateY()),
+                    (p3.getX() - inverse.getTranslateX()),
+                    (p3.getY() - inverse.getTranslateY()))
+            );
+        } else {
+            Point2D p12 = p1.midpoint(p2);
+            Point2D p23 = p2.midpoint(p3);
+            Point2D p31 = p3.midpoint(p1);
+
+            displayTriangles(inverse, order - 1, p1, p12, p31);
+            displayTriangles(inverse, order - 1, p12, p2, p23);
+            displayTriangles(inverse, order - 1, p31, p23, p3);
+        }
+    }
+
     private void update(){
         if (!this.readTextFields()){
             this.tfError();
@@ -166,6 +210,30 @@ public class SierpinskiTriangleTab implements TabInterface {
             return false;
         }
         return true;
+    }
+
+    private void saveCanvas(){
+        this.renderIMG = new BufferedImage(1920, 1080, BufferedImage.TYPE_INT_RGB);
+        g = (Graphics2D)this.renderIMG.getGraphics();
+        g.setColor(Color.BLUE);
+        g.fillRect(0,0, 1920, 1080);
+        g.setColor(Color.WHITE);
+        g.setStroke(new BasicStroke(5.0f / ((float)Math.pow(1.5f, this.order))));
+
+        AffineTransform inverse = this.camera.getInverse();
+
+        Point2D a1 = new Point2D(this.anchor1.getX()/inverse.getScaleX(), this.anchor1.getY()/inverse.getScaleY());
+        Point2D a2 = new Point2D(this.anchor2.getX()/inverse.getScaleX(), this.anchor2.getY()/inverse.getScaleY());
+        Point2D a3 = new Point2D(this.anchor3.getX()/inverse.getScaleX(), this.anchor3.getY()/inverse.getScaleY());
+
+        this.displayTriangles(inverse, this.order, a1, a2, a3);
+
+        try {
+            ImageIO.write(this.renderIMG, "png", new File("SaveFolder/SierpinskiTriangle@_n(" + this.order + ")_zoom(" + 1/inverse.getScaleX() + ")@(" + inverse.getTranslateX() + "x_" + inverse.getTranslateY() + "y).png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void tfError(){
