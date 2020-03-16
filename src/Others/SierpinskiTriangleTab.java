@@ -113,8 +113,8 @@ public class SierpinskiTriangleTab implements TabInterface {
             this.g2d.clearRect(
                     (int)inverse.getTranslateX(),
                     (int)inverse.getTranslateY(),
-                    (int)(inverse.getScaleX() * (1920 - 2 * inverse.getTranslateX())),
-                    (int)(inverse.getScaleY() * (1080 - 2 * inverse.getTranslateY()))
+                    (int)(inverse.getScaleX() * (1920) - inverse.getTranslateX()),
+                    (int)(inverse.getScaleY() * (1080) - inverse.getTranslateY())
             );
         }
 
