@@ -199,6 +199,7 @@ public class SierpinskiTriangleTab implements TabInterface {
     }
 
     private boolean readTextFields(){
+        //@TODO max for order around 11.
         try{
             int order = Integer.parseInt(this.tfOrder.getText());
             if (order != this.order){
