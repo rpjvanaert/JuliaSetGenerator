@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.nio.Buffer;
 import java.util.ArrayList;
 
-//@TODO feature save button?
 
 public class SierpinskiTriangleTab implements TabInterface {
 
@@ -84,7 +83,7 @@ public class SierpinskiTriangleTab implements TabInterface {
 
         this.labelOrder = new Label("Order: ");
 
-        this.tfOrder = new TextField("1");
+        this.tfOrder = new TextField("0");
 
         this.hBox.getChildren().addAll(this.labelOrder, this.buttonPlus, this.buttonMin, this.tfOrder, this.buttonSave);
         this.vBox.getChildren().addAll(this.hBox, this.canvas);
@@ -199,16 +198,23 @@ public class SierpinskiTriangleTab implements TabInterface {
     }
 
     private boolean readTextFields(){
-        //@TODO max for order around 11.
         try{
             int order = Integer.parseInt(this.tfOrder.getText());
             if (order != this.order){
                 this.order = order;
             }
+            if (this.order > 11){
+                this.order = 11;
+                this.tfOrder.setText("11");
+            }
             this.triangles = new ArrayList<>();
             this.setSierpinski();
         } catch (Exception e){
-            return false;
+            if (this.tfOrder.getText().isEmpty()){
+                return true;
+            } else {
+                return false;
+            }
         }
         return true;
     }
@@ -238,7 +244,12 @@ public class SierpinskiTriangleTab implements TabInterface {
     }
 
     private void tfError(){
-        //@TODO error pop up for not correct TextFields
+        this.labelError.setText("Make sure every TextField is formatted right.\n" +
+                "The order TextField should be an integer.\n" +
+                "Example: 5."
+        );
+        this.popUp.show();
+        this.tfOrder.setText("0");
     }
 
     private void setSierpinski(){
