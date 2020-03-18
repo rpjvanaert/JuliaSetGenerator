@@ -39,8 +39,8 @@ public class SierpinskiTriangleTab implements TabInterface {
     private ArrayList<Shape> triangles;
     private Point2D sierPoint1, sierPoint2, sierPoint3;
 
-    private ArrayList<Line> treeLines;
-    private Point2D root, branch;
+    private ArrayList<TreeLine> treeLines;
+    private Point2D root;
 
     private Button buttonRender, buttonPlus, buttonMin, buttonSave;
     private Label labelOrder;
@@ -70,8 +70,7 @@ public class SierpinskiTriangleTab implements TabInterface {
         this.sierPoint3 = new Point2D(600, 400);
 
         this.treeLines = new ArrayList<>();
-        this.root = new Point2D(0,340);
-        this.branch = new Point2D(0, 100);
+        this.root = new Point2D(0,100);
 
         this.buttonRender = new Button("Render");
         this.buttonRender.setOnAction(event -> {
@@ -178,7 +177,7 @@ public class SierpinskiTriangleTab implements TabInterface {
             }
         } else if (this.selected == this.tree){
             this.g2d.setStroke(new BasicStroke(2.0f));
-            for (Line each : this.treeLines){
+            for (TreeLine each : this.treeLines){
                 each.draw(this.g2d);
             }
         }
@@ -243,10 +242,18 @@ public class SierpinskiTriangleTab implements TabInterface {
             if (order != this.order){
                 this.order = order;
             }
-            if (this.order > 9){
-                this.order = 9;
-                this.renderOrder = 9;
-                this.tfOrder.setText("9");
+            if(this.selected == this.sierp){
+                if (this.order > 9){
+                    this.order = 9;
+                    this.renderOrder = 9;
+                    this.tfOrder.setText("9");
+                }
+            } else if (this.selected == this.tree){
+                if (this.order > 15){
+                    this.order = 15;
+                    this.renderOrder = 15;
+                    this.tfOrder.setText("15");
+                }
             }
         } catch (Exception e){
             if (this.tfOrder.getText().isEmpty()){
@@ -264,21 +271,33 @@ public class SierpinskiTriangleTab implements TabInterface {
         g.setColor(Color.BLUE);
         g.fillRect(0,0, 1920, 1080);
         g.setColor(Color.WHITE);
-        g.setStroke(new BasicStroke(5.0f / ((float)Math.pow(1.5f, this.order))));
+
 
         AffineTransform inverse = this.camera.getInverse();
+        if (this.selected == this.sierp){
+            g.setStroke(new BasicStroke(5.0f / ((float)Math.pow(1.5f, this.order))));
+            Point2D a1 = new Point2D(this.sierPoint1.getX()/inverse.getScaleX(), this.sierPoint1.getY()/inverse.getScaleY());
+            Point2D a2 = new Point2D(this.sierPoint2.getX()/inverse.getScaleX(), this.sierPoint2.getY()/inverse.getScaleY());
+            Point2D a3 = new Point2D(this.sierPoint3.getX()/inverse.getScaleX(), this.sierPoint3.getY()/inverse.getScaleY());
 
-        Point2D a1 = new Point2D(this.sierPoint1.getX()/inverse.getScaleX(), this.sierPoint1.getY()/inverse.getScaleY());
-        Point2D a2 = new Point2D(this.sierPoint2.getX()/inverse.getScaleX(), this.sierPoint2.getY()/inverse.getScaleY());
-        Point2D a3 = new Point2D(this.sierPoint3.getX()/inverse.getScaleX(), this.sierPoint3.getY()/inverse.getScaleY());
+            this.displayTriangles(inverse, this.order, a1, a2, a3);
 
-        this.displayTriangles(inverse, this.order, a1, a2, a3);
-
-        try {
-            ImageIO.write(this.renderIMG, "png", new File("SaveFolder/SierpinskiTriangle@_n(" + this.order + ")_zoom(" + 1/inverse.getScaleX() + ")@(" + inverse.getTranslateX() + "x_" + inverse.getTranslateY() + "y).png"));
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                ImageIO.write(this.renderIMG, "png", new File("SaveFolder/SierpinskiTriangle@_n(" + this.renderOrder + ")_zoom(" + 1/inverse.getScaleX() + ")@(" + inverse.getTranslateX() + "x_" + inverse.getTranslateY() + "y).png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (this.selected == this.tree){
+            for (TreeLine each : this.treeLines){
+                each.draw(g, inverse);
+            }
+            try {
+                ImageIO.write(this.renderIMG, "png", new File("SaveFolder/TreeFractal@_n(" + this.renderOrder + ")_zoom(" + 1/inverse.getScaleX() + ")@(" + inverse.getTranslateX() + "x_" + inverse.getTranslateY() + "y).png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
 
     }
 
@@ -314,17 +333,24 @@ public class SierpinskiTriangleTab implements TabInterface {
         this.tfOrder.setText("0");
     }
 
-    private void displayTree(int order, Point2D p1, Point2D p2){
+    private void displayTree(int order, Point2D origin, double lengthDiff, double degree, double rightDiff, double leftDiff){
+        Point2D nextOrigin = new Point2D(origin.getX() + 100 * Math.cos(degree) * lengthDiff, origin.getY() + 100 * Math.sin(degree) * lengthDiff);
+        TreeLine add = new TreeLine(origin, nextOrigin, (float)(order + 9)  / 9.0f);
+        this.treeLines.add(add);
         if (order != 0){
-            double diff = (Math.abs(p2.getY() - p1.getY()))/2.5;
-            displayTree(order - 1, p2, new Point2D(p2.getX() - diff * 1.3, p2.getY() - diff * 0.9));
-            displayTree(order - 1, p2, new Point2D(p2.getX() + diff * 1.3, p2.getY() - diff * 0.9));
+            double degree1 = degree + rightDiff;
+            double degree2 = degree - leftDiff;
+            displayTree(order - 1, nextOrigin, lengthDiff, degree1, rightDiff, leftDiff);
+            displayTree(order - 1, nextOrigin, lengthDiff, degree2, rightDiff, leftDiff);
         }
-        this.treeLines.add(new Line(p1, p2));
+    }
+
+    private void displayKoch(int order){
+
     }
 
     private void setTree(){
-        this.displayTree(this.order, this.root, this.branch);
+        this.displayTree(this.order, this.root, 0.5, Math.PI * 0.5, 0.2, 0.20);
     }
 
     private void setKoch(){
