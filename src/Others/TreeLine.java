@@ -23,12 +23,13 @@ public class TreeLine {
         g2d.drawLine((int)p1.getX(), (int)p1.getY() * -1 + 540, (int)p2.getX(), (int)p2.getY() * -1 + 540);
     }
 
-    public void draw(Graphics2D g, AffineTransform inverse){
+    public void draw(Graphics2D g){
         g.setStroke(this.stroke);
         g.drawLine(
-                (int)(p1.getX()/inverse.getScaleX()) + 960 - (int)(inverse.getTranslateX()/inverse.getScaleX()),
-                (int)(p1.getY()/inverse.getScaleY()) * -1 + 1080 - (int)(inverse.getTranslateY()/inverse.getScaleY()),
-                (int)(p2.getX()/inverse.getScaleX()) + 960 - (int)(inverse.getTranslateX()/inverse.getScaleX()),
-                (int)(p2.getY()/inverse.getScaleY()) * -1 + 1080 - (int)(inverse.getTranslateY()/inverse.getScaleY()));
+                (int)((p1.getX() + 960)),
+                (int)((p1.getY() * -1 + 1080)),
+                (int)((p2.getX() + 960)),
+                (int)((p2.getY() * -1 + 1080))
+        );
     }
 }

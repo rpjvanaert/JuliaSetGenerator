@@ -42,6 +42,8 @@ public class SierpinskiTriangleTab implements TabInterface {
     private ArrayList<TreeLine> treeLines;
     private Point2D root;
 
+    private ArrayList<TreeLine> kocLines;
+
     private Button buttonRender, buttonPlus, buttonMin, buttonSave;
     private Label labelOrder;
     private TextField tfOrder;
@@ -288,8 +290,11 @@ public class SierpinskiTriangleTab implements TabInterface {
                 e.printStackTrace();
             }
         } else if (this.selected == this.tree){
+            System.out.println("Scale: " + inverse.getScaleX());
+            System.out.println("Translate X: " + inverse.getTranslateX());
+            System.out.println("Translate Y: " + inverse.getTranslateY());
             for (TreeLine each : this.treeLines){
-                each.draw(g, inverse);
+                each.draw(g);
             }
             try {
                 ImageIO.write(this.renderIMG, "png", new File("SaveFolder/TreeFractal@_n(" + this.renderOrder + ")_zoom(" + 1/inverse.getScaleX() + ")@(" + inverse.getTranslateX() + "x_" + inverse.getTranslateY() + "y).png"));
@@ -346,7 +351,19 @@ public class SierpinskiTriangleTab implements TabInterface {
     }
 
     private void displayKoch(int order){
+        //call kochLine 6 times with order
+    }
 
+    private void kochLine(int order, Point2D p1, Point2D p5){
+        if (order == 0){
+            // draw the line
+            this.kocLines.add(new TreeLine(p1, p5, (float)(order + 9)  / 9.0f));
+        } else {
+            Point2D p3 = p1.midpoint(p5);
+            Point2D p2 = p1.midpoint(p3);
+            Point2D p4 = p3.midpoint(p5);
+
+        }
     }
 
     private void setTree(){
