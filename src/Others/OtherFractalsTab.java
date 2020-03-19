@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class SierpinskiTriangleTab implements TabInterface {
+public class OtherFractalsTab implements TabInterface {
 
     private HBox hBox;
     private VBox vBox;
@@ -42,14 +42,12 @@ public class SierpinskiTriangleTab implements TabInterface {
     private ArrayList<TreeLine> treeLines;
     private Point2D root;
 
-    private ArrayList<TreeLine> kocLines;
-
     private Button buttonRender, buttonPlus, buttonMin, buttonSave;
     private Label labelOrder;
     private TextField tfOrder;
 
     private ComboBox selectionBox;
-    private String sierp, tree, koch, selected;
+    private String sierp, tree, selected;
 
     private Stage popUp;
     private Label labelError;
@@ -60,7 +58,7 @@ public class SierpinskiTriangleTab implements TabInterface {
     private BufferedImage renderIMG;
     private Graphics2D g;
 
-    public SierpinskiTriangleTab(){
+    public OtherFractalsTab(){
         this.hBox = new HBox();
         this.vBox = new VBox();
         this.canvas = new Canvas(1920,1080);
@@ -88,10 +86,7 @@ public class SierpinskiTriangleTab implements TabInterface {
                 this.setSierpinski();
             } else if (this.selected == this.tree){
                 this.setTree();
-            } else if (this.selected == this.koch){
-                this.setKoch();
             }
-
         });
 
         this.buttonPlus = new Button("+");
@@ -118,10 +113,9 @@ public class SierpinskiTriangleTab implements TabInterface {
 
         this.sierp = "Sierpinski Triangle";
         this.tree = "Tree Fractal";
-        this.koch = "Koch Snowflake";
         this.selected = this.sierp;
         this.selectionBox = new ComboBox();
-        this.selectionBox.getItems().addAll(this.sierp, this.tree, this.koch);
+        this.selectionBox.getItems().addAll(this.sierp, this.tree);
         this.selectionBox.setValue(this.sierp);
 
         this.hBox.getChildren().addAll(this.selectionBox, this.buttonRender, this.labelOrder, this.buttonPlus, this.buttonMin, this.tfOrder, this.buttonSave);
@@ -185,6 +179,36 @@ public class SierpinskiTriangleTab implements TabInterface {
         }
     }
 
+    private boolean readTextFields(){
+        try{
+            int order = Integer.parseInt(this.tfOrder.getText());
+            this.renderOrder = order;
+            if (order != this.order){
+                this.order = order;
+            }
+            if(this.selected == this.sierp){
+                if (this.order > 9){
+                    this.order = 9;
+                    this.renderOrder = 9;
+                    this.tfOrder.setText("9");
+                }
+            } else if (this.selected == this.tree){
+                if (this.order > 15){
+                    this.order = 15;
+                    this.renderOrder = 15;
+                    this.tfOrder.setText("15");
+                }
+            }
+        } catch (Exception e){
+            if (this.tfOrder.getText().isEmpty()){
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void displayTriangles(int order, Point2D p1, Point2D p2, Point2D p3){
         if (order == 0){
             GeneralPath triangle = new GeneralPath();
@@ -237,34 +261,8 @@ public class SierpinskiTriangleTab implements TabInterface {
         }
     }
 
-    private boolean readTextFields(){
-        try{
-            int order = Integer.parseInt(this.tfOrder.getText());
-            this.renderOrder = order;
-            if (order != this.order){
-                this.order = order;
-            }
-            if(this.selected == this.sierp){
-                if (this.order > 9){
-                    this.order = 9;
-                    this.renderOrder = 9;
-                    this.tfOrder.setText("9");
-                }
-            } else if (this.selected == this.tree){
-                if (this.order > 15){
-                    this.order = 15;
-                    this.renderOrder = 15;
-                    this.tfOrder.setText("15");
-                }
-            }
-        } catch (Exception e){
-            if (this.tfOrder.getText().isEmpty()){
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return true;
+    private void setSierpinski(){
+        displayTriangles(this.order, this.sierPoint1, this.sierPoint2, this.sierPoint3);
     }
 
     private void saveCanvas(){
@@ -290,9 +288,6 @@ public class SierpinskiTriangleTab implements TabInterface {
                 e.printStackTrace();
             }
         } else if (this.selected == this.tree){
-            System.out.println("Scale: " + inverse.getScaleX());
-            System.out.println("Translate X: " + inverse.getTranslateX());
-            System.out.println("Translate Y: " + inverse.getTranslateY());
             for (TreeLine each : this.treeLines){
                 each.draw(g);
             }
@@ -302,8 +297,6 @@ public class SierpinskiTriangleTab implements TabInterface {
                 e.printStackTrace();
             }
         }
-
-
     }
 
     private void comboBoxError() {
@@ -323,8 +316,6 @@ public class SierpinskiTriangleTab implements TabInterface {
             this.selected = this.sierp;
         } else if (selectedString == this.tree){
             this.selected = this.tree;
-        } else if (selectedString == this.koch){
-            this.selected = this.koch;
         }
         return true;
     }
@@ -350,32 +341,8 @@ public class SierpinskiTriangleTab implements TabInterface {
         }
     }
 
-    private void displayKoch(int order){
-        //call kochLine 6 times with order
-    }
-
-    private void kochLine(int order, Point2D p1, Point2D p5){
-        if (order == 0){
-            // draw the line
-            this.kocLines.add(new TreeLine(p1, p5, (float)(order + 9)  / 9.0f));
-        } else {
-            Point2D p3 = p1.midpoint(p5);
-            Point2D p2 = p1.midpoint(p3);
-            Point2D p4 = p3.midpoint(p5);
-
-        }
-    }
-
     private void setTree(){
         this.displayTree(this.order, this.root, 0.5, Math.PI * 0.5, 0.2, 0.20);
-    }
-
-    private void setKoch(){
-        //@TODO call koch fractal recursive function
-    }
-
-    private void setSierpinski(){
-        displayTriangles(this.order, this.sierPoint1, this.sierPoint2, this.sierPoint3);
     }
 
     private void setTextFields(){
