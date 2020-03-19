@@ -36,7 +36,7 @@ public class OtherFractalsTab implements TabInterface {
     private FXGraphics2D g2d;
     private Camera camera;
 
-    private ArrayList<Shape> triangles;
+    private SierpinskiLogic sierpinskiLogic;
     private Point2D sierPoint1, sierPoint2, sierPoint3;
 
     private ArrayList<TreeLine> treeLines;
@@ -64,7 +64,7 @@ public class OtherFractalsTab implements TabInterface {
         this.canvas = new Canvas(1920,1080);
         this.g2d = new FXGraphics2D(this.canvas.getGraphicsContext2D());
 
-        this.triangles = new ArrayList<>();
+        this.sierpinskiLogic = new SierpinskiLogic();
         this.sierPoint1 = new Point2D(0, -500);
         this.sierPoint2 = new Point2D(-600, 400);
         this.sierPoint3 = new Point2D(600, 400);
@@ -80,7 +80,7 @@ public class OtherFractalsTab implements TabInterface {
             if (!this.readComboBox()){
                 this.comboBoxError();
             }
-            this.triangles = new ArrayList<>();
+            this.sierpinskiLogic = new SierpinskiLogic();
             this.treeLines = new ArrayList<>();
             if (this.selected == this.sierp){
                 this.setSierpinski();
@@ -168,7 +168,7 @@ public class OtherFractalsTab implements TabInterface {
         this.g2d.setStroke(new BasicStroke(5.0f / ((float)Math.pow(1.5f, this.renderOrder))));
         if (this.selected == this.sierp) {
             this.g2d.setStroke(new BasicStroke(5.0f / ((float)Math.pow(1.5f, this.renderOrder))));
-            for (Shape each : this.triangles) {
+            for (Shape each : this.sierpinskiLogic.getTriangles()) {
                 this.g2d.draw(each);
             }
         } else if (this.selected == this.tree){
@@ -209,60 +209,8 @@ public class OtherFractalsTab implements TabInterface {
         return true;
     }
 
-    private void displayTriangles(int order, Point2D p1, Point2D p2, Point2D p3){
-        if (order == 0){
-            GeneralPath triangle = new GeneralPath();
-            triangle.moveTo(p1.getX(), p1.getY());
-            triangle.lineTo(p2.getX(), p2.getY());
-            triangle.lineTo(p3.getX(), p3.getY());
-            triangle.lineTo(p1.getX(), p1.getY());
-            triangle.closePath();
-            this.triangles.add(triangle);
-
-        } else {
-            Point2D p12 = p1.midpoint(p2);
-            Point2D p23 = p2.midpoint(p3);
-            Point2D p31 = p3.midpoint(p1);
-
-            displayTriangles(order - 1, p1, p12, p31);
-            displayTriangles(order - 1, p12, p2, p23);
-            displayTriangles(order - 1, p31, p23, p3);
-        }
-    }
-
-    private void displayTriangles(AffineTransform inverse, int order, Point2D p1, Point2D p2, Point2D p3){
-        if (order == 0){
-            g.draw(new Line2D.Double(
-                    (p1.getX() - inverse.getTranslateX()),
-                    (p1.getY() - inverse.getTranslateY()),
-                    (p2.getX() - inverse.getTranslateX()),
-                    (p2.getY() - inverse.getTranslateY()))
-            );
-            g.draw(new Line2D.Double(
-                    (p3.getX() - inverse.getTranslateX()),
-                    (p3.getY() - inverse.getTranslateY()),
-                    (p2.getX() - inverse.getTranslateX()),
-                    (p2.getY() - inverse.getTranslateY())
-            ));
-            g.draw(new Line2D.Double(
-                    (p1.getX() - inverse.getTranslateX()),
-                    (p1.getY() - inverse.getTranslateY()),
-                    (p3.getX() - inverse.getTranslateX()),
-                    (p3.getY() - inverse.getTranslateY()))
-            );
-        } else {
-            Point2D p12 = p1.midpoint(p2);
-            Point2D p23 = p2.midpoint(p3);
-            Point2D p31 = p3.midpoint(p1);
-
-            displayTriangles(inverse, order - 1, p1, p12, p31);
-            displayTriangles(inverse, order - 1, p12, p2, p23);
-            displayTriangles(inverse, order - 1, p31, p23, p3);
-        }
-    }
-
     private void setSierpinski(){
-        displayTriangles(this.order, this.sierPoint1, this.sierPoint2, this.sierPoint3);
+        this.sierpinskiLogic.displayTriangles(this.order, this.sierPoint1, this.sierPoint2, this.sierPoint3);
     }
 
     private void saveCanvas(){
@@ -280,7 +228,7 @@ public class OtherFractalsTab implements TabInterface {
             Point2D a2 = new Point2D(this.sierPoint2.getX()/inverse.getScaleX(), this.sierPoint2.getY()/inverse.getScaleY());
             Point2D a3 = new Point2D(this.sierPoint3.getX()/inverse.getScaleX(), this.sierPoint3.getY()/inverse.getScaleY());
 
-            this.displayTriangles(inverse, this.order, a1, a2, a3);
+            this.sierpinskiLogic.displayTriangles(this.g, inverse, this.order, a1, a2, a3);
 
             try {
                 ImageIO.write(this.renderIMG, "png", new File("SaveFolder/SierpinskiTriangle@_n(" + this.renderOrder + ")_zoom(" + 1/inverse.getScaleX() + ")@(" + inverse.getTranslateX() + "x_" + inverse.getTranslateY() + "y).png"));

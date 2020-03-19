@@ -17,7 +17,7 @@ public class SierpinskiLogic {
 
     public ArrayList<Shape> getTriangles(){ return this.triangles; }
 
-    private void displayTriangles(int order, Point2D p1, Point2D p2, Point2D p3){
+    public void displayTriangles(int order, Point2D p1, Point2D p2, Point2D p3){
         if (order == 0){
             GeneralPath triangle = new GeneralPath();
             triangle.moveTo(p1.getX(), p1.getY());
@@ -38,7 +38,7 @@ public class SierpinskiLogic {
         }
     }
 
-    private void displayTriangles(Graphics2D g, AffineTransform inverse, int order, Point2D p1, Point2D p2, Point2D p3){
+    public void displayTriangles(Graphics2D g, AffineTransform inverse, int order, Point2D p1, Point2D p2, Point2D p3){
         if (order == 0){
             g.draw(new Line2D.Double(
                     (p1.getX() - inverse.getTranslateX()),
