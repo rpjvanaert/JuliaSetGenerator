@@ -57,7 +57,7 @@ public class JuliaSetLogic {
         Complex z = new Complex(real, imag);
         for (int i = 0; i < this.maxIterations; ++i){
             z.square();
-            z.addToYourself(c);
+            z.addToThis(c);
             if (z.getReal() >= 2 || z.getImaginary() >= 2){
                 return i;
             }
