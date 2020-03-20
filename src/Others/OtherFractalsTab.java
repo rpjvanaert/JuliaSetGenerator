@@ -82,6 +82,7 @@ public class OtherFractalsTab implements TabInterface {
             }
             this.sierpinskiLogic = new SierpinskiLogic();
             this.treeFractalLogic = new TreeFractalLogic();
+            this.camera = new Camera(this.canvas);
             if (this.selected == this.sierp){
                 this.setSierpinski();
             } else if (this.selected == this.tree){
@@ -132,7 +133,7 @@ public class OtherFractalsTab implements TabInterface {
         this.popUp.setWidth(400);
         this.popUp.setHeight(120);
 
-        this.camera = new Camera( this.canvas, this.g2d);
+        this.camera = new Camera( this.canvas);
         this.canvas.setOnMouseDragged(event -> {
             this.camera.mouseDragged(event);
         });

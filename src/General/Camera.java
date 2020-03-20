@@ -14,26 +14,44 @@ import java.awt.geom.Point2D;
 
 /**
  * Created by johan on 15-2-2017.
- * Edited and adapted by Ralf van Aert on 14-3-2020.
+ * Changed and commented by Ralf van Aert on 20-3-2020.
  */
+
 public class Camera {
 	private Point2D centerPoint = new Point2D.Double(0,0);
 	private double zoom = 1;
 	private double rotation = 0;
 	private Point2D lastMousePos;
-	private Canvas canvas;
-	private Resizable resizable;
-	private FXGraphics2D g2d;
-	private AffineTransform inverse = new AffineTransform();
+	private AffineTransform inverse;
 
-	public Camera(Canvas canvas, FXGraphics2D g2d) {
-		this.canvas = canvas;
-		this.g2d = g2d;
+	/**
+	 * Camera Constructor
+	 *
+	 * creates inverse without transformations and sets setOnAction for mouse on canvas.
+	 *
+	 * @param canvas
+	 */
 
-		canvas.setOnMousePressed(e -> {lastMousePos = new Point2D.Double(e.getX(), e.getY());});
-		canvas.setOnMouseDragged(e -> mouseDragged(e));
-		canvas.setOnScroll(e-> mouseScroll(e));
+	public Camera(Canvas canvas) {
+		this.inverse = new AffineTransform();
+
+		canvas.setOnMousePressed(this::mousePressed);
+		canvas.setOnMouseDragged(this::mouseDragged);
+		canvas.setOnScroll(this::mouseScroll);
 	}
+
+
+	/**
+	 * getTransform
+	 *
+	 * returns AffineTransform that needs to be done according to mouse actions done.
+	 * creates inverseTransform for the AffineTransform returned.
+	 *
+	 * @param windowWidth
+	 * @param windowHeight
+	 * @param center
+	 * @return AffineTransform
+	 */
 
 	public AffineTransform getTransform(int windowWidth, int windowHeight, boolean center)  {
 		AffineTransform tx = new AffineTransform();
@@ -51,8 +69,31 @@ public class Camera {
 		return tx;
 	}
 
+
+	/**
+	 * mousePressed
+	 * action handler for when mouse is pressed.
+	 * saves position of mouse as lastMousePos.
+	 *
+	 * @param e
+	 */
+
+	public void mousePressed(MouseEvent e){
+		lastMousePos = new Point2D.Double(e.getX(), e.getY());
+	}
+
+
+	/**
+	 * mouseDragged
+	 * action handler for when mouse is dragged.
+	 * centerPoint is changed according to place mouse is dragged with right mouse button.
+	 * also saves mousePosition as lastMousePos afterwards.
+	 *
+	 * @param e
+	 */
+
 	public void mouseDragged(MouseEvent e) {
-		if(e.getButton() == MouseButton.MIDDLE) {
+		if(e.getButton() == MouseButton.SECONDARY) {
 			centerPoint = new Point2D.Double(
 					centerPoint.getX() - (lastMousePos.getX() - e.getX()) / zoom,
 					centerPoint.getY() - (lastMousePos.getY() - e.getY()) / zoom
@@ -61,9 +102,26 @@ public class Camera {
 		}
 	}
 
+
+	/**
+	 * mouseScroll
+	 * action handler for when mouse is scrolled.
+	 * modifies zoom according to zoom.
+	 *
+	 * @param e
+	 */
+
 	public void mouseScroll(ScrollEvent e) {
 		zoom *= (1 + e.getDeltaY()/250.0f);
 	}
+
+
+	/**
+	 * getInverse
+	 * returns the InverseTransform that has been saved in the last getTransform call
+	 * or an empty AffineTransform if there hasn't been a camera transform done.
+	 * @return
+	 */
 
 	public AffineTransform getInverse(){ return this.inverse;}
 }

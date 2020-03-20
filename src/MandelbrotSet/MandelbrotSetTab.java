@@ -106,7 +106,7 @@ public class MandelbrotSetTab implements TabInterface {
         this.popUp.setWidth(400);
         this.popUp.setHeight(120);
 
-        this.camera = new Camera(this.canvas, this.g2d);
+        this.camera = new Camera(this.canvas);
         this.canvas.setOnMouseDragged(event -> {
             this.camera.mouseDragged(event);
         });
@@ -168,7 +168,7 @@ public class MandelbrotSetTab implements TabInterface {
     private void render() {
         this.mandelbrotSetLogic.init();
         this.renderIMG = this.mandelbrotSetLogic.getImage();
-        this.camera = new Camera(this.canvas, this.g2d);
+        this.camera = new Camera(this.canvas);
     }
     private void setMandelbrot(float focusR, float focusI, float stepSize, int iterations, float hueCycleSpeed){
         this.mandelbrotSetLogic = new MandelSetLogic(1920, 1080, focusR, focusI, stepSize);

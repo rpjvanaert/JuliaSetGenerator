@@ -108,7 +108,7 @@ public class JuliaSetTab implements TabInterface {
         this.popUp.setWidth(400);
         this.popUp.setHeight(120);
 
-        this.camera = new Camera(this.canvas, this.g2d);
+        this.camera = new Camera(this.canvas);
         this.canvas.setOnMouseDragged(event -> {
             this.camera.mouseDragged(event);
         });
@@ -172,7 +172,7 @@ public class JuliaSetTab implements TabInterface {
     private void render() {
         this.juliaSetLogic.init();
         this.renderIMG = this.juliaSetLogic.getImage();
-        this.camera = new Camera(this.canvas, this.g2d);
+        this.camera = new Camera(this.canvas);
     }
 
     private void setJuliaSet(float nullR, float nullI, float focusR, float focusI, float stepSize, int iterations, float hueCycleSpeed){
