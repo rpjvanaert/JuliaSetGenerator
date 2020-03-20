@@ -44,6 +44,8 @@ public class JuliaSetTab implements TabInterface {
         this.canvas = new Canvas(1920, 1080);
         this.g2d = new FXGraphics2D(this.canvas.getGraphicsContext2D());
 
+
+        //Render button, renders if textFields are correct, else error pops up.
         this.buttonRender = new Button("Render");
         this.buttonRender.setOnAction(event -> {
             if (this.readTextFields()){
@@ -53,11 +55,13 @@ public class JuliaSetTab implements TabInterface {
             }
         });
 
+        //Reset button, resets textFields.
         this.buttonReset = new Button("Reset TextFields");
         this.buttonReset.setOnAction(event -> {
             this.setNormalJuliaSet();
         });
 
+        //Saves rendered image in SaveFolder.
         this.buttonSave = new Button("Save Image");
         this.buttonSave.setOnAction(event -> {
             if (this.renderIMG != null){
@@ -70,6 +74,8 @@ public class JuliaSetTab implements TabInterface {
                 this.saveError();
             }
         });
+
+        //Every label and textField.
         this.labelNullR = new Label("C P. Real:");
         this.labelNullI = new Label("C P. Imag.:");
         this.labelFocusR = new Label("Focus P. Real:");
@@ -95,8 +101,11 @@ public class JuliaSetTab implements TabInterface {
                 this.buttonSave
         );
         this.vBox.getChildren().addAll(this.hBox, this.canvas);
+
+
         this.setNormalJuliaSet();
 
+        //Error pop-up.
         this.popUp = new Stage();
         VBox errorTFVBOX = new VBox();
         this.labelError = new Label();
@@ -108,13 +117,8 @@ public class JuliaSetTab implements TabInterface {
         this.popUp.setWidth(400);
         this.popUp.setHeight(120);
 
+
         this.camera = new Camera(this.canvas);
-        this.canvas.setOnMouseDragged(event -> {
-            this.camera.mouseDragged(event);
-        });
-        this.canvas.setOnScroll(event -> {
-            this.camera.mouseScroll(event);
-        });
 
         new AnimationTimer(){
             public void handle(long now){
@@ -123,23 +127,27 @@ public class JuliaSetTab implements TabInterface {
         }.start();
     }
 
+    /**
+     * draw
+     * clears according rectangle, applies cameraTransform and draws renderIMG.
+     */
     public void draw(){
-        if (this.camera.getInverse() == null){
-            this.g2d.clearRect(0,0, 1920, 1080);
-        } else {
-            AffineTransform inverse = this.camera.getInverse();
-            this.g2d.clearRect(
-                    -1,
-                    -1,
-                    (int)(inverse.getTranslateX() + 1920 * inverse.getScaleX()),
-                    (int)(inverse.getTranslateY() + 1080 * inverse.getScaleY())
-            );
-        }
+        AffineTransform inverse = this.camera.getInverse();
+        this.g2d.clearRect(
+                -1,
+                -1,
+                (int)(inverse.getTranslateX() + 1920 * inverse.getScaleX()),
+                (int)(inverse.getTranslateY() + 1080 * inverse.getScaleY())
+        );
 
         this.g2d.setTransform(this.camera.getTransform(1920,1080, false));
         this.g2d.drawImage(this.renderIMG, null, null);
     }
 
+    /**
+     * tfError
+     * sets error label text for TextFieldError.
+     */
     private void tfError(){
         this.labelError.setText("Make sure every TextField is formatted right.\n" +
                 "Every TextField should be a float.\n" +
@@ -148,11 +156,21 @@ public class JuliaSetTab implements TabInterface {
         this.popUp.show();
     }
 
+    /**
+     * saveError
+     * sets error label text for save error.
+     */
     private void saveError(){
         this.labelError.setText("Render Image before saving Image!");
         this.popUp.show();
     }
 
+    /**
+     * readTextFields
+     * Reads every textField and makes a JuliaSet of it.
+     * returns false if an exception gets caught.
+     * @return boolean
+     */
     private boolean readTextFields() {
         try{
             float nullR = Float.parseFloat(this.tfNullR.getText());
@@ -169,22 +187,49 @@ public class JuliaSetTab implements TabInterface {
         return true;
     }
 
+
+    /**
+     * render
+     * inits juliaSet and initializes new Camera object, resetting CameraTransformations.
+     */
     private void render() {
         this.juliaSetLogic.init();
         this.renderIMG = this.juliaSetLogic.getImage();
         this.camera = new Camera(this.canvas);
     }
 
+
+    /**
+     * setJuliaSet
+     * sets the JuliaSet given in parameters with 1920x1080 resolution.
+     * @param nullR
+     * @param nullI
+     * @param focusR
+     * @param focusI
+     * @param stepSize
+     * @param iterations
+     * @param hueCycleSpeed
+     */
     private void setJuliaSet(float nullR, float nullI, float focusR, float focusI, float stepSize, int iterations, float hueCycleSpeed){
         this.juliaSetLogic = new JuliaSetLogic(1920, 1080, nullR, nullI, focusR, focusI, stepSize);
         this.juliaSetLogic.setMaxIterations(iterations);
         this.juliaSetLogic.setHueCycleSpeed(hueCycleSpeed);
     }
 
+
+    /**
+     * setNormalJuliaSet
+     * sets preset JuliaSet to textFields.
+     */
     private void setNormalJuliaSet(){
         this.tfNullR.setText("-0.8f"); this.tfNullI.setText("0.156f"); this.tfFocusR.setText("0.0f"); this.tfFocusI.setText("0.0f"); this.tfStepSize.setText("0.002f"); this.tfIterations.setText("1000"); this.tfHueCycleSpeed.setText("0.002f");
     }
 
+    /**
+     * getNode
+     * returns node of itself, VBox.
+     * @return Node
+     */
     public Node getNode(){
         return this.vBox;
     }

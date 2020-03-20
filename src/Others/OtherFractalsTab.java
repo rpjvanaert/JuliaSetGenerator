@@ -133,14 +133,8 @@ public class OtherFractalsTab implements TabInterface {
         this.popUp.setWidth(400);
         this.popUp.setHeight(120);
 
-        this.camera = new Camera( this.canvas);
-        this.canvas.setOnMouseDragged(event -> {
-            this.camera.mouseDragged(event);
-        });
 
-        this.canvas.setOnScroll(event -> {
-            this.camera.mouseScroll(event);
-        });
+        this.camera = new Camera( this.canvas);
 
         new AnimationTimer(){
             public void handle(long now){
@@ -151,17 +145,13 @@ public class OtherFractalsTab implements TabInterface {
 
     private void draw(){
         this.g2d.setBackground(Color.blue);
-        if (this.camera.getInverse() == null){
-            this.g2d.clearRect(0,0,1920,1080);
-        } else {
-            AffineTransform inverse = this.camera.getInverse();
-            this.g2d.clearRect(
-                    (int)inverse.getTranslateX(),
-                    (int)inverse.getTranslateY(),
-                    (int)(inverse.getScaleX() * (1920) - inverse.getTranslateX()),
-                    (int)(inverse.getScaleY() * (1080) - inverse.getTranslateY())
-            );
-        }
+        AffineTransform inverse = this.camera.getInverse();
+        this.g2d.clearRect(
+                (int)inverse.getTranslateX(),
+                (int)inverse.getTranslateY(),
+                (int)(inverse.getScaleX() * (1920) - inverse.getTranslateX()),
+                (int)(inverse.getScaleY() * (1080) - inverse.getTranslateY())
+        );
 
         this.g2d.setTransform(this.camera.getTransform(1920, 1080, true));
 

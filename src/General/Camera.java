@@ -78,7 +78,7 @@ public class Camera {
 	 * @param e
 	 */
 
-	public void mousePressed(MouseEvent e){
+	private void mousePressed(MouseEvent e){
 		lastMousePos = new Point2D.Double(e.getX(), e.getY());
 	}
 
@@ -92,7 +92,7 @@ public class Camera {
 	 * @param e
 	 */
 
-	public void mouseDragged(MouseEvent e) {
+	private void mouseDragged(MouseEvent e) {
 		if(e.getButton() == MouseButton.SECONDARY) {
 			centerPoint = new Point2D.Double(
 					centerPoint.getX() - (lastMousePos.getX() - e.getX()) / zoom,
@@ -111,7 +111,7 @@ public class Camera {
 	 * @param e
 	 */
 
-	public void mouseScroll(ScrollEvent e) {
+	private void mouseScroll(ScrollEvent e) {
 		zoom *= (1 + e.getDeltaY()/250.0f);
 	}
 

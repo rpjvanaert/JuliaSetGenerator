@@ -107,12 +107,7 @@ public class MandelbrotSetTab implements TabInterface {
         this.popUp.setHeight(120);
 
         this.camera = new Camera(this.canvas);
-        this.canvas.setOnMouseDragged(event -> {
-            this.camera.mouseDragged(event);
-        });
-        this.canvas.setOnScroll(event -> {
-            this.camera.mouseScroll(event);
-        });
+
 
         new AnimationTimer(){
             public void handle(long now){
@@ -122,17 +117,13 @@ public class MandelbrotSetTab implements TabInterface {
     }
 
     public void draw(){
-        if (this.camera.getInverse() == null){
-            this.g2d.clearRect(0,0, 1920, 1080);
-        } else {
-            AffineTransform inverse = this.camera.getInverse();
-            this.g2d.clearRect(
-                    -1,
-                    -1,
-                    (int)(inverse.getTranslateX() + 1920 * inverse.getScaleX()),
-                    (int)(inverse.getTranslateY() + 1080 * inverse.getScaleY())
-            );
-        }
+        AffineTransform inverse = this.camera.getInverse();
+        this.g2d.clearRect(
+                -1,
+                -1,
+                (int)(inverse.getTranslateX() + 1920 * inverse.getScaleX()),
+                (int)(inverse.getTranslateY() + 1080 * inverse.getScaleY())
+        );
 
         this.g2d.setTransform(this.camera.getTransform(1920,1080, false));
         this.g2d.drawImage(this.renderIMG, null, null);
