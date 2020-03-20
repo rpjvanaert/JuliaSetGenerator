@@ -1,4 +1,6 @@
-package MandelbrotAndJuliaSet;
+package JuliaSet;
+
+import General.Complex;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

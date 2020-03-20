@@ -1,5 +1,6 @@
-package MandelbrotAndJuliaSet;
+package JuliaSet;
 
+import General.Camera;
 import General.TabInterface;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Node;
@@ -13,7 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jfree.fx.FXGraphics2D;
-import General.Camera;
 
 import javax.imageio.ImageIO;
 import java.awt.geom.AffineTransform;
@@ -21,24 +21,24 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class MandelbrotSetTab implements TabInterface {
+public class JuliaSetTab implements TabInterface {
     private HBox hBox;
     private VBox vBox;
     private Canvas canvas;
     private FXGraphics2D g2d;
     private Camera camera;
 
+    private JuliaSetLogic juliaSetLogic;
+    private BufferedImage renderIMG = null;
+
     private Button buttonRender, buttonReset, buttonSave;
-    private Label labelFocusR, labelFocusI, labelStepSize, labelIterations, labelHueCycleSpeed;
-    private TextField tfFocusR, tfFocusI, tfStepSize, tfIterations, tfHueCycleSpeed;
+    private Label labelNullR, labelNullI, labelFocusR, labelFocusI, labelStepSize, labelIterations, labelHueCycleSpeed;
+    private TextField tfNullR, tfNullI, tfFocusR, tfFocusI, tfStepSize, tfIterations, tfHueCycleSpeed;
 
     private Stage popUp;
     private Label labelError;
 
-    private MandelSetLogic mandelbrotSetLogic;
-    private BufferedImage renderIMG = null;
-
-    public MandelbrotSetTab(){
+    public JuliaSetTab(){
         this.hBox = new HBox();
         this.vBox = new VBox();
         this.canvas = new Canvas(1920, 1080);
@@ -55,14 +55,14 @@ public class MandelbrotSetTab implements TabInterface {
 
         this.buttonReset = new Button("Reset TextFields");
         this.buttonReset.setOnAction(event -> {
-            this.setNormalMandelbrot();
+            this.setNormalJuliaSet();
         });
 
         this.buttonSave = new Button("Save Image");
         this.buttonSave.setOnAction(event -> {
-            if(this.renderIMG != null){
+            if (this.renderIMG != null){
                 try {
-                    ImageIO.write(this.renderIMG, "png", new File("saveFolder/" + this.mandelbrotSetLogic.getFileNamePreset() + ".png"));
+                    ImageIO.write(this.renderIMG, "png", new File("SaveFolder/" + this.juliaSetLogic.getFileNamePreset() + ".png"));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -70,21 +70,23 @@ public class MandelbrotSetTab implements TabInterface {
                 this.saveError();
             }
         });
-
-        this.labelFocusR = new Label("Focus Point Real:");
-        this.labelFocusI = new Label("Focus Point Imaginary:");
-        this.labelStepSize = new Label("Step size per pixel(render-zoom):");
-        this.labelIterations = new Label("Max amount of iterations");
+        this.labelNullR = new Label("C P. Real:");
+        this.labelNullI = new Label("C P. Imag.:");
+        this.labelFocusR = new Label("Focus P. Real:");
+        this.labelFocusI = new Label("Focus P. Imag.:");
+        this.labelStepSize = new Label("gap/pixel(render-zoom):");
+        this.labelIterations = new Label("Max # of iterations");
         this.labelHueCycleSpeed = new Label("Hue Cycle Speed");
 
+        this.tfNullR = new TextField(); this.tfNullI = new TextField();
         this.tfFocusR = new TextField(); this.tfFocusI = new TextField();
         this.tfStepSize = new TextField(); this.tfIterations = new TextField();
         this.tfHueCycleSpeed = new TextField();
 
-
-
         this.hBox.getChildren().addAll(
                 this.buttonRender, this.buttonReset,
+                this.labelNullR, this.tfNullR,
+                this.labelNullI, this.tfNullI,
                 this.labelFocusR, this.tfFocusR,
                 this.labelFocusI, this.tfFocusI,
                 this.labelStepSize, this.tfStepSize,
@@ -92,14 +94,14 @@ public class MandelbrotSetTab implements TabInterface {
                 this.labelHueCycleSpeed, this.tfHueCycleSpeed,
                 this.buttonSave
         );
-        this.setNormalMandelbrot();
         this.vBox.getChildren().addAll(this.hBox, this.canvas);
+        this.setNormalJuliaSet();
 
         this.popUp = new Stage();
-        VBox errorVBOX = new VBox();
+        VBox errorTFVBOX = new VBox();
         this.labelError = new Label();
-        errorVBOX.getChildren().add(this.labelError);
-        this.popUp.setScene(new Scene(errorVBOX));
+        errorTFVBOX.getChildren().add(this.labelError);
+        this.popUp.setScene(new Scene(errorTFVBOX));
         this.popUp.setTitle("Error Pop-up");
         Image icon = new Image(getClass().getResourceAsStream("/GUI-Images/error.png"));
         this.popUp.getIcons().add(icon);
@@ -138,7 +140,7 @@ public class MandelbrotSetTab implements TabInterface {
         this.g2d.drawImage(this.renderIMG, null, null);
     }
 
-    private void tfError() {
+    private void tfError(){
         this.labelError.setText("Make sure every TextField is formatted right.\n" +
                 "Every TextField should be a float.\n" +
                 "Except Iterations, this should be an integer and bigger than 0.\n" +
@@ -146,19 +148,21 @@ public class MandelbrotSetTab implements TabInterface {
         this.popUp.show();
     }
 
-    private void saveError() {
+    private void saveError(){
         this.labelError.setText("Render Image before saving Image!");
         this.popUp.show();
     }
 
     private boolean readTextFields() {
         try{
+            float nullR = Float.parseFloat(this.tfNullR.getText());
+            float nullI = Float.parseFloat(this.tfNullI.getText());
             float focusR = Float.parseFloat(this.tfFocusR.getText());
             float focusI = Float.parseFloat(this.tfFocusI.getText());
             float stepSize = Float.parseFloat(this.tfStepSize.getText());
             int iterations = Integer.parseInt(this.tfIterations.getText());
             float hueCycleSpeed = Float.parseFloat(this.tfHueCycleSpeed.getText());
-            this.setMandelbrot(focusR, focusI, stepSize, iterations, hueCycleSpeed);
+            this.setJuliaSet(nullR, nullI, focusR, focusI, stepSize, iterations, hueCycleSpeed);
         } catch (Exception e){
             return false;
         }
@@ -166,20 +170,22 @@ public class MandelbrotSetTab implements TabInterface {
     }
 
     private void render() {
-        this.mandelbrotSetLogic.init();
-        this.renderIMG = this.mandelbrotSetLogic.getImage();
+        this.juliaSetLogic.init();
+        this.renderIMG = this.juliaSetLogic.getImage();
         this.camera = new Camera(this.canvas, this.g2d);
     }
-    private void setMandelbrot(float focusR, float focusI, float stepSize, int iterations, float hueCycleSpeed){
-        this.mandelbrotSetLogic = new MandelSetLogic(1920, 1080, focusR, focusI, stepSize);
-        this.mandelbrotSetLogic.setMaxIterations(iterations);
-        this.mandelbrotSetLogic.setHueCycleSpeed(hueCycleSpeed);
+
+    private void setJuliaSet(float nullR, float nullI, float focusR, float focusI, float stepSize, int iterations, float hueCycleSpeed){
+        this.juliaSetLogic = new JuliaSetLogic(1920, 1080, nullR, nullI, focusR, focusI, stepSize);
+        this.juliaSetLogic.setMaxIterations(iterations);
+        this.juliaSetLogic.setHueCycleSpeed(hueCycleSpeed);
     }
 
-    private void setNormalMandelbrot(){
-        this.tfFocusR.setText("0.0f"); this.tfFocusI.setText("0.0f"); this.tfStepSize.setText("0.002f"); this.tfIterations.setText("1000"); this.tfHueCycleSpeed.setText("0.002f");
-        this.setMandelbrot(0.0f, 0.0f, 0.002f, 1000, 0.002f);
+    private void setNormalJuliaSet(){
+        this.tfNullR.setText("-0.8f"); this.tfNullI.setText("0.156f"); this.tfFocusR.setText("0.0f"); this.tfFocusI.setText("0.0f"); this.tfStepSize.setText("0.002f"); this.tfIterations.setText("1000"); this.tfHueCycleSpeed.setText("0.002f");
     }
 
-    public Node getNode(){ return this.vBox; }
+    public Node getNode(){
+        return this.vBox;
+    }
 }

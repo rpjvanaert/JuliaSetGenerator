@@ -1,4 +1,4 @@
-package MandelbrotAndJuliaSet;
+package General;
 
 public class Complex {
     private float real;

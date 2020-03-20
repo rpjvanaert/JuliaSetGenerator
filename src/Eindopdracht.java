@@ -1,6 +1,6 @@
 import General.TabInterface;
-import MandelbrotAndJuliaSet.JuliaSetTab;
-import MandelbrotAndJuliaSet.MandelbrotSetTab;
+import JuliaSet.JuliaSetTab;
+import MandelbrotSet.MandelbrotSetTab;
 import Others.OtherFractalsTab;
 import javafx.application.Application;
 
