@@ -39,7 +39,7 @@ public class OtherFractalsTab implements TabInterface {
     private SierpinskiLogic sierpinskiLogic;
     private Point2D sierPoint1, sierPoint2, sierPoint3;
 
-    private ArrayList<TreeLine> treeLines;
+    private TreeFractalLogic treeFractalLogic;
     private Point2D root;
 
     private Button buttonRender, buttonPlus, buttonMin, buttonSave;
@@ -69,7 +69,7 @@ public class OtherFractalsTab implements TabInterface {
         this.sierPoint2 = new Point2D(-600, 400);
         this.sierPoint3 = new Point2D(600, 400);
 
-        this.treeLines = new ArrayList<>();
+        this.treeFractalLogic = new TreeFractalLogic();
         this.root = new Point2D(0,100);
 
         this.buttonRender = new Button("Render");
@@ -81,7 +81,7 @@ public class OtherFractalsTab implements TabInterface {
                 this.comboBoxError();
             }
             this.sierpinskiLogic = new SierpinskiLogic();
-            this.treeLines = new ArrayList<>();
+            this.treeFractalLogic = new TreeFractalLogic();
             if (this.selected == this.sierp){
                 this.setSierpinski();
             } else if (this.selected == this.tree){
@@ -173,7 +173,7 @@ public class OtherFractalsTab implements TabInterface {
             }
         } else if (this.selected == this.tree){
             this.g2d.setStroke(new BasicStroke(2.0f));
-            for (TreeLine each : this.treeLines){
+            for (TreeLine each : this.treeFractalLogic.getTreeLines()){
                 each.draw(this.g2d);
             }
         }
@@ -236,7 +236,7 @@ public class OtherFractalsTab implements TabInterface {
                 e.printStackTrace();
             }
         } else if (this.selected == this.tree){
-            for (TreeLine each : this.treeLines){
+            for (TreeLine each : this.treeFractalLogic.getTreeLines()){
                 each.draw(g);
             }
             try {
@@ -277,20 +277,8 @@ public class OtherFractalsTab implements TabInterface {
         this.tfOrder.setText("0");
     }
 
-    private void displayTree(int order, Point2D origin, double lengthDiff, double degree, double rightDiff, double leftDiff){
-        Point2D nextOrigin = new Point2D(origin.getX() + 100 * Math.cos(degree) * lengthDiff, origin.getY() + 100 * Math.sin(degree) * lengthDiff);
-        TreeLine add = new TreeLine(origin, nextOrigin, (float)(order + 9)  / 9.0f);
-        this.treeLines.add(add);
-        if (order != 0){
-            double degree1 = degree + rightDiff;
-            double degree2 = degree - leftDiff;
-            displayTree(order - 1, nextOrigin, lengthDiff, degree1, rightDiff, leftDiff);
-            displayTree(order - 1, nextOrigin, lengthDiff, degree2, rightDiff, leftDiff);
-        }
-    }
-
     private void setTree(){
-        this.displayTree(this.order, this.root, 0.5, Math.PI * 0.5, 0.2, 0.20);
+        this.treeFractalLogic.displayTree(this.order, this.root, 0.5, Math.PI * 0.5, 0.2, 0.20);
     }
 
     private void setTextFields(){

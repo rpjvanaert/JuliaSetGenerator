@@ -170,7 +170,7 @@ public class JuliaSetTab implements TabInterface {
     }
 
     private void render() {
-        this.juliaSetLogic.initJuliaSet();
+        this.juliaSetLogic.init();
         this.renderIMG = this.juliaSetLogic.getImage();
         this.camera = new Camera(this.canvas, this.g2d);
     }

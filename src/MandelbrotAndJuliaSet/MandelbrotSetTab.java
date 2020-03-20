@@ -35,7 +35,7 @@ public class MandelbrotSetTab implements TabInterface {
     private Stage popUp;
     private Label labelError;
 
-    private JuliaSetLogic mandelbrotSetLogic;
+    private MandelSetLogic mandelbrotSetLogic;
     private BufferedImage renderIMG = null;
 
     public MandelbrotSetTab(){
@@ -166,12 +166,12 @@ public class MandelbrotSetTab implements TabInterface {
     }
 
     private void render() {
-        this.mandelbrotSetLogic.initMandlebrotSet();
+        this.mandelbrotSetLogic.init();
         this.renderIMG = this.mandelbrotSetLogic.getImage();
         this.camera = new Camera(this.canvas, this.g2d);
     }
     private void setMandelbrot(float focusR, float focusI, float stepSize, int iterations, float hueCycleSpeed){
-        this.mandelbrotSetLogic = new JuliaSetLogic(1920, 1080, focusR, focusI, stepSize);
+        this.mandelbrotSetLogic = new MandelSetLogic(1920, 1080, focusR, focusI, stepSize);
         this.mandelbrotSetLogic.setMaxIterations(iterations);
         this.mandelbrotSetLogic.setHueCycleSpeed(hueCycleSpeed);
     }
