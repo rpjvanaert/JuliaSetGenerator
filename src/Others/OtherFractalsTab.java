@@ -20,16 +20,12 @@ import org.jfree.fx.FXGraphics2D;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 
 public class OtherFractalsTab implements TabInterface {
-
     private HBox hBox;
     private VBox vBox;
     private Canvas canvas;
@@ -64,14 +60,17 @@ public class OtherFractalsTab implements TabInterface {
         this.canvas = new Canvas(1920,1080);
         this.g2d = new FXGraphics2D(this.canvas.getGraphicsContext2D());
 
+        //Creates new SierpinskiLogic with preset Point2D's for the triangle.
         this.sierpinskiLogic = new SierpinskiLogic();
         this.sierPoint1 = new Point2D(0, -500);
         this.sierPoint2 = new Point2D(-600, 400);
         this.sierPoint3 = new Point2D(600, 400);
 
+        //Creates new TreeFractalLogic with Point2D for root.
         this.treeFractalLogic = new TreeFractalLogic();
         this.root = new Point2D(0,100);
 
+        //Render Button, renders if textFields are correct, else error pops up
         this.buttonRender = new Button("Render");
         this.buttonRender.setOnAction(event -> {
             if (!this.readTextFields()){
@@ -90,12 +89,14 @@ public class OtherFractalsTab implements TabInterface {
             }
         });
 
+        //Plus Button, adds one to order.
         this.buttonPlus = new Button("+");
         this.buttonPlus.setOnAction(event -> {
             ++this.order;
             this.setTextFields();
         });
 
+        //Min Button, subtracts one to order.
         this.buttonMin = new Button("-");
         this.buttonMin.setOnAction(event -> {
             --this.order;
@@ -105,13 +106,15 @@ public class OtherFractalsTab implements TabInterface {
             this.setTextFields();
         });
 
+        //Save Button, saves current fractal as image to SaveFolder.
         this.buttonSave = new Button("Save");
         this.buttonSave.setOnAction(event -> this.saveCanvas());
 
-        this.labelOrder = new Label("Order: ");
 
+        this.labelOrder = new Label("Order: ");
         this.tfOrder = new TextField("0");
 
+        //Sets up fractal selection.
         this.sierp = "Sierpinski Triangle";
         this.tree = "Tree Fractal";
         this.selected = this.sierp;
@@ -122,6 +125,8 @@ public class OtherFractalsTab implements TabInterface {
         this.hBox.getChildren().addAll(this.selectionBox, this.buttonRender, this.labelOrder, this.buttonPlus, this.buttonMin, this.tfOrder, this.buttonSave);
         this.vBox.getChildren().addAll(this.hBox, this.canvas);
 
+
+        //Sets up error pop-up.
         this.popUp = new Stage();
         VBox errorVBox = new VBox();
         this.labelError = new Label();
@@ -143,6 +148,10 @@ public class OtherFractalsTab implements TabInterface {
         }.start();
     }
 
+    /**
+     * draw
+     * Clears according rectangle and draws correct fractal.
+     */
     private void draw(){
         this.g2d.setBackground(Color.blue);
         AffineTransform inverse = this.camera.getInverse();
@@ -170,6 +179,12 @@ public class OtherFractalsTab implements TabInterface {
         }
     }
 
+    /**
+     * readTextFields
+     * Reads order textField and returns true if correct.
+     * Holds constraints on order, different for both fractals.
+     * @return boolean
+     */
     private boolean readTextFields(){
         try{
             int order = Integer.parseInt(this.tfOrder.getText());

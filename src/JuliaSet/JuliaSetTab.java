@@ -167,7 +167,7 @@ public class JuliaSetTab implements TabInterface {
 
     /**
      * readTextFields
-     * Reads every textField and makes a JuliaSet of it.
+     * reads every textField and makes a JuliaSet of it.
      * returns false if an exception gets caught.
      * @return boolean
      */
@@ -186,7 +186,6 @@ public class JuliaSetTab implements TabInterface {
         }
         return true;
     }
-
 
     /**
      * render

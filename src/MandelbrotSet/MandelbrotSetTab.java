@@ -44,6 +44,7 @@ public class MandelbrotSetTab implements TabInterface {
         this.canvas = new Canvas(1920, 1080);
         this.g2d = new FXGraphics2D(this.canvas.getGraphicsContext2D());
 
+        //Render Button, renders if textFields are correct, else error pops up.
         this.buttonRender = new Button("Render");
         this.buttonRender.setOnAction(event -> {
             if (this.readTextFields()){
@@ -53,11 +54,13 @@ public class MandelbrotSetTab implements TabInterface {
             }
         });
 
+        //Reset button, resets textFields.
         this.buttonReset = new Button("Reset TextFields");
         this.buttonReset.setOnAction(event -> {
             this.setNormalMandelbrot();
         });
 
+        //Saves rendered image in SaveFolder.
         this.buttonSave = new Button("Save Image");
         this.buttonSave.setOnAction(event -> {
             if(this.renderIMG != null){
@@ -71,6 +74,7 @@ public class MandelbrotSetTab implements TabInterface {
             }
         });
 
+        //Every label and textField.
         this.labelFocusR = new Label("Focus Point Real:");
         this.labelFocusI = new Label("Focus Point Imaginary:");
         this.labelStepSize = new Label("Step size per pixel(render-zoom):");
@@ -81,8 +85,6 @@ public class MandelbrotSetTab implements TabInterface {
         this.tfStepSize = new TextField(); this.tfIterations = new TextField();
         this.tfHueCycleSpeed = new TextField();
 
-
-
         this.hBox.getChildren().addAll(
                 this.buttonRender, this.buttonReset,
                 this.labelFocusR, this.tfFocusR,
@@ -92,9 +94,13 @@ public class MandelbrotSetTab implements TabInterface {
                 this.labelHueCycleSpeed, this.tfHueCycleSpeed,
                 this.buttonSave
         );
+
+
         this.setNormalMandelbrot();
         this.vBox.getChildren().addAll(this.hBox, this.canvas);
 
+
+        //Error pop-up.
         this.popUp = new Stage();
         VBox errorVBOX = new VBox();
         this.labelError = new Label();
@@ -106,6 +112,7 @@ public class MandelbrotSetTab implements TabInterface {
         this.popUp.setWidth(400);
         this.popUp.setHeight(120);
 
+
         this.camera = new Camera(this.canvas);
 
 
@@ -116,6 +123,11 @@ public class MandelbrotSetTab implements TabInterface {
         }.start();
     }
 
+
+    /**
+     * draw
+     * clears according rectangle applies cameraTransform and draw renderIMG.
+     */
     public void draw(){
         AffineTransform inverse = this.camera.getInverse();
         this.g2d.clearRect(
@@ -129,6 +141,10 @@ public class MandelbrotSetTab implements TabInterface {
         this.g2d.drawImage(this.renderIMG, null, null);
     }
 
+    /**
+     * tfError
+     * sets error label for TextFieldError.
+     */
     private void tfError() {
         this.labelError.setText("Make sure every TextField is formatted right.\n" +
                 "Every TextField should be a float.\n" +
@@ -137,10 +153,21 @@ public class MandelbrotSetTab implements TabInterface {
         this.popUp.show();
     }
 
+    /**
+     * saveError
+     * sets error label text for save error.
+     */
     private void saveError() {
         this.labelError.setText("Render Image before saving Image!");
         this.popUp.show();
     }
+
+    /**
+     * readTextFields
+     * reads every textField and makes a MandelbrotSet of it.
+     * returns false if an exception gets caught.
+     * @return boolean
+     */
 
     private boolean readTextFields() {
         try{
@@ -156,21 +183,45 @@ public class MandelbrotSetTab implements TabInterface {
         return true;
     }
 
+    /**
+     * render
+     * inits mandelbrotSet and initializes new Camera object, resetting CameraTransformations.
+     */
     private void render() {
         this.mandelbrotSetLogic.init();
         this.renderIMG = this.mandelbrotSetLogic.getImage();
         this.camera = new Camera(this.canvas);
     }
+
+    /**
+     * setMandelbrot
+     * sets the MandelbrotSet given in parameters with 1920x1080 resolution.
+     * @param focusR
+     * @param focusI
+     * @param stepSize
+     * @param iterations
+     * @param hueCycleSpeed
+     */
+
     private void setMandelbrot(float focusR, float focusI, float stepSize, int iterations, float hueCycleSpeed){
         this.mandelbrotSetLogic = new MandelSetLogic(1920, 1080, focusR, focusI, stepSize);
         this.mandelbrotSetLogic.setMaxIterations(iterations);
         this.mandelbrotSetLogic.setHueCycleSpeed(hueCycleSpeed);
     }
 
+    /**
+     * setNormalMandelbrot
+     * sets preset MandelbrotSet to textFields.
+     */
     private void setNormalMandelbrot(){
         this.tfFocusR.setText("0.0f"); this.tfFocusI.setText("0.0f"); this.tfStepSize.setText("0.002f"); this.tfIterations.setText("1000"); this.tfHueCycleSpeed.setText("0.002f");
         this.setMandelbrot(0.0f, 0.0f, 0.002f, 1000, 0.002f);
     }
 
+    /**
+     * getNode
+     * returns node of itself, VBox.
+     * @return Node
+     */
     public Node getNode(){ return this.vBox; }
 }
