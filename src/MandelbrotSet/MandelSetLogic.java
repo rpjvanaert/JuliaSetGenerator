@@ -36,6 +36,7 @@ public class MandelSetLogic {
         this.hueCycleSpeed = 0.002f;
     }
 
+    
     /**
      * getFileNamePreset
      * returns String that contains that puts the render in the right format of the fileName.
@@ -45,6 +46,7 @@ public class MandelSetLogic {
     public String getFileNamePreset(){
         return "Mandlebrot@(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "x_HCS(" + this.hueCycleSpeed +")_res(" + this.resWidth + "x" + this.resHeight + ")px";
     }
+
 
     /**
      * getImage
@@ -75,6 +77,7 @@ public class MandelSetLogic {
         return img;
     }
 
+
     /**
      * setHueCycleSpeed
      * sets the speed of which the color rotates per iteration.
@@ -83,10 +86,12 @@ public class MandelSetLogic {
 
     public void setHueCycleSpeed(float hueCycleSpeed){ this.hueCycleSpeed = hueCycleSpeed; }
 
+
     /**
      * init
      * initializes MandelbrotSet with all set parameters.
      * Puts in amount of iterations in an int matrix array with correct resolution width and height.
+     * Iterates every pixel.
      */
     public void init(){
         int indexR = 0;
@@ -104,7 +109,7 @@ public class MandelSetLogic {
                 if (indexI >= resHeight){
                     break;
                 }
-                this.iterations[indexR][indexI] = iterations(r, i, cReal, cImag);
+                this.iterations[indexR][indexI] = iterate(r, i, cReal, cImag);
                 indexI++;
             }
             indexI = 0;
@@ -115,9 +120,10 @@ public class MandelSetLogic {
         }
     }
 
+
     /**
      * iterations
-     * Iterates until iterated more than maxIterations or above complex above 2.
+     * iterates until iterated more than maxIterations or above 2.
      * returns amount of iterations.
      * @param cReal
      * @param cImag
@@ -126,7 +132,7 @@ public class MandelSetLogic {
      * @return int
      */
 
-    private int iterations(float cReal, float cImag, float real, float imag){
+    private int iterate(float cReal, float cImag, float real, float imag){
         Complex c = new Complex(cReal, cImag);
         Complex z = new Complex(real, imag);
         for (int i = 0; i < this.maxIterations; ++i){
@@ -138,6 +144,7 @@ public class MandelSetLogic {
         }
         return -1;
     }
+
 
     /**
      * setMaxIterations

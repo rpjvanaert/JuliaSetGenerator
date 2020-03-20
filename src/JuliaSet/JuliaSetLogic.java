@@ -14,6 +14,19 @@ public class JuliaSetLogic {
     private float cReal, cImag;
     private float hueCycleSpeed;
 
+    /**
+     * JuliaSetLogic Constructor
+     *
+     * Sets up the julia set with every needed parameter (does NOT compute/init).
+     *
+     * @param resWidth
+     * @param resHeight
+     * @param cReal
+     * @param cImag
+     * @param focusPointR
+     * @param focusPointI
+     * @param stepSize
+     */
 
     public JuliaSetLogic(int resWidth, int resHeight, float cReal, float cImag, float focusPointR, float focusPointI, float stepSize){
         this.stepSize = stepSize;
@@ -25,34 +38,19 @@ public class JuliaSetLogic {
         this.hueCycleSpeed = 0.002f;
     }
 
-    public void init(){
-        int indexR = 0;
-        int indexI = 0;
-        float width = (float)resWidth * stepSize;
 
-        float rMin = focusPointR - 0.5f * width;
-        float rMax = focusPointR + 0.5f * width;
+    /**
+     * iterate
+     * iterates until iterated more than maxIterations or above 2.
+     * returns amount of iterations.
+     * @param cReal
+     * @param cImag
+     * @param real
+     * @param imag
+     * @return
+     */
 
-        float iMin = focusPointI - 0.5f * (float)resHeight * stepSize;
-        float iMax = focusPointI + 0.5f * (float)resHeight * stepSize;
-
-        for (float r = rMin; r < rMax; r += stepSize){
-            for (float i = iMin; i < iMax; i += stepSize){
-                if (indexI >= resHeight){
-                    break;
-                }
-                this.iterations[indexR][indexI] = juliaIterations(cReal, cImag, r, i);
-                indexI++;
-            }
-            indexI = 0;
-            indexR++;
-            if (indexR >= resWidth){
-                break;
-            }
-        }
-    }
-
-    private int juliaIterations(float cReal, float cImag, float real, float imag){
+    private int iterate(float cReal, float cImag, float real, float imag){
         Complex c = new Complex(cReal, cImag);
         Complex z = new Complex(real, imag);
         for (int i = 0; i < this.maxIterations; ++i){
@@ -65,28 +63,36 @@ public class JuliaSetLogic {
         return -1;
     }
 
+
+    /**
+     * setMaxIterations
+     * sets max amount of iterations.
+     * @param amount
+     */
+
     public void setMaxIterations(int amount){
         if (amount > 0){
             this.maxIterations = amount;
         }
     }
 
+
+    /**
+     * getFileNamePreset
+     * returns String that contains that puts the render in the right format of the fileName.
+     * @return String
+     */
+
     public String getFileNamePreset(){
         return "JuliaSet@(" + this.cReal + "+ "+ this.cImag +")_focus(" + this.focusPointR + " + " + this.focusPointI + "i)wZoom_" + (1/this.stepSize) + "x_HCS(" + this.hueCycleSpeed + ")_res(" + this.resWidth + "x" + this.resHeight + ")px";
     }
 
-    @Override
-    public String toString() {
-        String string = "";
-        for (int r = 0; r < this.iterations.length; ++r){
 
-            for (int i = 0; i < this.iterations.length; ++i){
-                string += this.iterations[r][i] + " ";
-            }
-            string += "\n";
-        }
-        return string;
-    }
+    /**
+     * getImage
+     * returns the BufferedImage from the iterations done in the init method.
+     * @return BufferedImage
+     */
 
     public BufferedImage getImage(){
         BufferedImage img = new BufferedImage(this.resWidth, this.resHeight, BufferedImage.TYPE_INT_RGB);
@@ -111,7 +117,47 @@ public class JuliaSetLogic {
         return img;
     }
 
-    public float getHueCycleSpeed(){ return this.hueCycleSpeed; }
+
+    /**
+     * setHueCycleSpeed
+     * sets the speed of which the color rotates per iteration.
+     * @param hueCycleSpeed float
+     */
 
     public void setHueCycleSpeed(float hueCycleSpeed){ this.hueCycleSpeed = hueCycleSpeed; }
+
+
+    /**
+     * init
+     * initializes JuliaSet with all set parameters.
+     * Puts in amount of iterations in an int matrix array with correct resolution width and height.
+     * Iterates every pixel.
+     */
+
+    public void init(){
+        int indexR = 0;
+        int indexI = 0;
+        float width = (float)resWidth * stepSize;
+
+        float rMin = focusPointR - 0.5f * width;
+        float rMax = focusPointR + 0.5f * width;
+
+        float iMin = focusPointI - 0.5f * (float)resHeight * stepSize;
+        float iMax = focusPointI + 0.5f * (float)resHeight * stepSize;
+
+        for (float r = rMin; r < rMax; r += stepSize){
+            for (float i = iMin; i < iMax; i += stepSize){
+                if (indexI >= resHeight){
+                    break;
+                }
+                this.iterations[indexR][indexI] = iterate(cReal, cImag, r, i);
+                indexI++;
+            }
+            indexI = 0;
+            indexR++;
+            if (indexR >= resWidth){
+                break;
+            }
+        }
+    }
 }
