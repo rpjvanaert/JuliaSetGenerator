@@ -1,4 +1,4 @@
-package Others;
+package OtherFractals;
 
 import General.Camera;
 import General.TabInterface;

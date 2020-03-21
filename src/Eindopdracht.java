@@ -1,7 +1,7 @@
 import General.TabInterface;
 import JuliaSet.JuliaSetTab;
 import MandelbrotSet.MandelbrotSetTab;
-import Others.OtherFractalsTab;
+import OtherFractals.OtherFractalsTab;
 import javafx.application.Application;
 
 import javafx.scene.Scene;

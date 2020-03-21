@@ -1,4 +1,4 @@
-package Others;
+package OtherFractals;
 
 import javafx.geometry.Point2D;
 
