@@ -215,10 +215,18 @@ public class OtherFractalsTab implements TabInterface {
         return true;
     }
 
+    /**
+     * setSierpinski
+     * sets (initializes) sierpinski logic for order set with the preset anchor points
+     */
     private void setSierpinski(){
         this.sierpinskiLogic.displayTriangles(this.order, this.sierPoint1, this.sierPoint2, this.sierPoint3);
     }
 
+    /**
+     * saveCanvas
+     * saves current sierpinski triangle on canvas with CameraTransform into an image and saves it in SaveFolder.
+     */
     private void saveCanvas(){
         this.renderIMG = new BufferedImage(1920, 1080, BufferedImage.TYPE_INT_RGB);
         g = (Graphics2D)this.renderIMG.getGraphics();
@@ -253,9 +261,15 @@ public class OtherFractalsTab implements TabInterface {
         }
     }
 
+    /**
+     * comboBoxError
+     * sets error label for comboBoxError.
+     */
     private void comboBoxError() {
         this.labelError.setText("There is a comboBox error I've never gotten myself\n" +
-                "Good job on breaking this application!");
+                "Good job on breaking this application!\n" +
+                "Please report this error.");
+        this.popUp.show();
     }
 
     private boolean readComboBox() {
@@ -274,6 +288,10 @@ public class OtherFractalsTab implements TabInterface {
         return true;
     }
 
+    /**
+     * tfError
+     * sets error label for tfError text. Happens when textField is not formatted right.
+     */
     private void tfError(){
         this.labelError.setText("Make sure every TextField is formatted right.\n" +
                 "The order TextField should be an integer.\n" +
@@ -283,13 +301,26 @@ public class OtherFractalsTab implements TabInterface {
         this.tfOrder.setText("0");
     }
 
+    /**
+     * setTree
+     * sets TreeFractal with order set on preset root point.
+     */
     private void setTree(){
         this.treeFractalLogic.displayTree(this.order, this.root, 0.5, Math.PI * 0.5, 0.2, 0.20);
     }
 
+    /**
+     * setTextFields
+     * sets textField to order change done by either plus or min button.
+     */
     private void setTextFields(){
         this.tfOrder.setText("" + this.order);
     }
 
+    /**
+     * getNode
+     * returns VBox of itself.
+     * @return Node
+     */
     public Node getNode(){ return this.vBox;}
 }
