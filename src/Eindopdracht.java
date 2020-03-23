@@ -21,7 +21,7 @@ public class Eindopdracht extends Application {
 
         Tab mandelbrotTab = new Tab("MandelbrotSet");
         Tab juliaTab = new Tab("JuliaSet");
-        Tab otherTab = new Tab("Sierpinski Triangle");
+        Tab otherTab = new Tab("Other Fractals");
         Tab presetTab = new Tab("Preset Show");
 
 
